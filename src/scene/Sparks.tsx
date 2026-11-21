@@ -8,6 +8,9 @@ import {
   Vector3,
   type Object3D,
 } from "three";
+import { useStore } from "zustand";
+
+import { qualityStore } from "./quality";
 
 const MOUTH_COUNT = 96;
 const AMBIENT_COUNT = 140;
@@ -22,6 +25,7 @@ const AMBIENT_BOUNDS = { x: 3.4, y: 2.1, z: 1.2 };
  * is created per frame.
  */
 export function Sparks({ mouth }: { mouth: RefObject<Object3D | null> }) {
+  const tier = useStore(qualityStore, (state) => state.tier);
   const reducedMotion = useRef(false);
   const previous = useMemo(() => new Vector3(), []);
   const current = useMemo(() => new Vector3(), []);
@@ -84,6 +88,8 @@ export function Sparks({ mouth }: { mouth: RefObject<Object3D | null> }) {
   }, []);
 
   useFrame((_, delta) => {
+    if (tier === "low") return;
+
     const ambient = ambientGeometry.getAttribute("position") as BufferAttribute;
     if (!reducedMotion.current) {
       for (let i = 0; i < AMBIENT_COUNT; i += 1) {
@@ -112,7 +118,8 @@ export function Sparks({ mouth }: { mouth: RefObject<Object3D | null> }) {
     previous.copy(current);
 
     if (!reducedMotion.current) {
-      emitAccumulator.current += Math.min(speed, 24) * delta * 5;
+      const emission = tier === "medium" ? 2.5 : 5;
+      emitAccumulator.current += Math.min(speed, 24) * delta * emission;
       let budget = 8;
       while (emitAccumulator.current >= 1 && budget > 0) {
         emitAccumulator.current -= 1;
@@ -168,6 +175,8 @@ export function Sparks({ mouth }: { mouth: RefObject<Object3D | null> }) {
     mouthVelocities[offset + 2] = (Math.random() - 0.5) * 1.2;
     mouthLives[slot] = 0.3 + Math.random() * 0.35;
   }
+
+  if (tier === "low") return null;
 
   return (
     <>

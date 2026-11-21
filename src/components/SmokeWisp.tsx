@@ -49,8 +49,8 @@ export function SmokeWisp() {
       next += 1;
       puff.x = pointerX;
       puff.y = pointerY;
-      puff.vx = (Math.random() - 0.5) * 0.35;
-      puff.vy = -(0.15 + Math.random() * 0.35);
+      puff.vx = (Math.random() - 0.5) * 30;
+      puff.vy = -(40 + Math.random() * 60);
       puff.life = 1;
       active = true;
     };
@@ -82,9 +82,9 @@ export function SmokeWisp() {
       for (const puff of puffs) {
         if (puff.life <= 0) continue;
 
-        puff.x += puff.vx;
-        puff.y += puff.vy;
-        puff.vy -= 0.08 * step;
+        puff.x += puff.vx * step;
+        puff.y += puff.vy * step;
+        puff.vy -= 30 * step;
         puff.life -= step * 1.6;
 
         if (puff.life <= 0) continue;
