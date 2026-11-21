@@ -15,6 +15,18 @@ import { qualityStore } from "./quality";
 /** The shader plane does not read project data yet; accents mirror the projects. */
 const PROJECT_ACCENTS = ["#c9a86a", "#7f9ec4", "#a98a9e", "#8fae9b"];
 
+/** Four covers, generated once per session instead of on every project change. */
+const COVER_CACHE = new Map<string, CanvasTexture>();
+
+function getCover(accent: string) {
+  const cached = COVER_CACHE.get(accent);
+  if (cached) return cached;
+
+  const cover = makeCover(accent);
+  COVER_CACHE.set(accent, cover);
+  return cover;
+}
+
 const VERTEX = /* glsl */ `
   varying vec2 vUv;
   void main() {
@@ -77,8 +89,7 @@ export function ProjectHover() {
   const visible = projectIndex >= 0 && projectIndex < 4 && tier !== "low";
   const accent = PROJECT_ACCENTS[projectIndex] ?? PROJECT_ACCENTS[0];
 
-  const cover = useMemo(() => makeCover(accent), [accent]);
-  useEffect(() => () => cover.dispose(), [cover]);
+  const cover = useMemo(() => getCover(accent), [accent]);
 
   const uniforms = useMemo(
     () => ({
@@ -185,7 +196,7 @@ export function ProjectHover() {
 
 /** Procedural stand-in cover: ink ground, accent bloom, diagonal rule, grain. */
 function makeCover(accent: string) {
-  const size = 512;
+  const size = 256;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
@@ -216,7 +227,7 @@ function makeCover(accent: string) {
     context.stroke();
   }
 
-  for (let i = 0; i < 2400; i += 1) {
+  for (let i = 0; i < 1200; i += 1) {
     context.fillStyle = `rgba(242, 237, 225, ${Math.random() * 0.05})`;
     context.fillRect(Math.random() * size, Math.random() * size, 1, 1);
   }

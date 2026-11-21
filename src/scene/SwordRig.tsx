@@ -28,15 +28,17 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
   const tier = useStore(qualityStore, (state) => state.tier);
 
   useEffect(() => {
-    if (tier !== "medium" || ambient) return;
+    if (!ambient || tier === "low") return;
 
-    // Demand rendering means a throttled invalidation needs a timer of its own.
+    // Ambient pages only need the idle sword and smoke. Cap them instead of
+    // rendering at the display refresh rate behind static content.
+    const fps = tier === "high" ? 30 : 24;
     const id = window.setInterval(() => {
       if (!reducedMotion.current) invalidate();
-    }, 1000 / 30);
+    }, 1000 / fps);
 
     return () => window.clearInterval(id);
-  }, [tier, ambient, invalidate]);
+  }, [ambient, tier, invalidate]);
 
   useEffect(
     () =>
@@ -81,7 +83,6 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
       );
       object.rotation.z = 0.04 + Math.sin(time * 0.35) * 0.03;
       object.rotation.y = Math.sin(time * 0.25) * 0.08;
-      if (tier !== "low" && !reducedMotion.current) invalidate();
       return;
     }
 
@@ -118,7 +119,7 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
       invalidate();
     }
 
-    if (!reducedMotion.current && tier === "high") invalidate();
+    if (!reducedMotion.current && tier !== "low") invalidate();
   });
 
   return (
@@ -126,7 +127,7 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
       <group ref={group} name="sword-rig">
         <Sword mouthRef={mouth} />
       </group>
-      {!ambient && <Sparks mouth={mouth} />}
+      {!ambient && tier !== "low" && <Sparks mouth={mouth} />}
     </>
   );
 }

@@ -202,7 +202,6 @@
     width: 78vw;
     height: 78vw;
     border-radius: 9999px;
-    filter: blur(70px);
     will-change: transform;
   }
 

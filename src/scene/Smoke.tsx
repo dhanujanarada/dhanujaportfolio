@@ -81,6 +81,7 @@ const FRAGMENT = /* glsl */ `
 `;
 
 const COUNT_BY_TIER = (tier: QualityTier) => TIER_SETTINGS[tier].smokeCount;
+const MAX_COUNT = TIER_SETTINGS.high.smokeCount;
 
 export function Smoke({ calm = false }: { calm?: boolean }) {
   const tier = useStore(qualityStore, (state) => state.tier);
@@ -89,23 +90,25 @@ export function Smoke({ calm = false }: { calm?: boolean }) {
   const previousGlobal = useRef(0);
   const velocity = useRef(0);
 
-  const noise = useMemo(() => createNoiseTexture(128), []);
+  const noise = useMemo(() => createNoiseTexture(96), []);
 
+  /**
+   * One buffer for every tier. Changing tiers only changes `instanceCount`, so
+   * the upgrade to high does not rebuild geometry or reshuffle the cloud.
+   */
   const geometry = useMemo(() => {
-    if (count === 0) return null;
-
     const plane = new PlaneGeometry(1, 1);
     const next = new InstancedBufferGeometry();
     next.index = plane.index;
     next.attributes.position = plane.attributes.position;
     next.attributes.uv = plane.attributes.uv;
-    next.instanceCount = count;
+    next.instanceCount = MAX_COUNT;
 
-    const offsets = new Float32Array(count * 3);
-    const scales = new Float32Array(count);
-    const seeds = new Float32Array(count);
+    const offsets = new Float32Array(MAX_COUNT * 3);
+    const scales = new Float32Array(MAX_COUNT);
+    const seeds = new Float32Array(MAX_COUNT);
 
-    for (let i = 0; i < count; i += 1) {
+    for (let i = 0; i < MAX_COUNT; i += 1) {
       const offset = i * 3;
       offsets[offset] = (Math.random() * 2 - 1) * 2.9;
       offsets[offset + 1] = (Math.random() - 0.5) * 1.1;
@@ -118,7 +121,11 @@ export function Smoke({ calm = false }: { calm?: boolean }) {
     next.setAttribute("aScale", new InstancedBufferAttribute(scales, 1));
     next.setAttribute("aSeed", new InstancedBufferAttribute(seeds, 1));
     return next;
-  }, [count]);
+  }, []);
+
+  useEffect(() => {
+    if (geometry) geometry.instanceCount = count;
+  }, [geometry, count]);
 
   const uniforms = useMemo(
     () => ({
@@ -147,7 +154,7 @@ export function Smoke({ calm = false }: { calm?: boolean }) {
     shader.uniforms.uOpacity.value = calm ? 0.06 : 0.16;
   });
 
-  if (!geometry) return null;
+  if (count === 0 || !geometry) return null;
 
   return (
     <mesh geometry={geometry} frustumCulled={false} renderOrder={-1}>

@@ -1,11 +1,11 @@
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, type RefObject } from "react";
-import { MeshPhysicalMaterial, type Mesh, type Object3D } from "three";
+import { MeshStandardMaterial, type Mesh, type Object3D } from "three";
 
 import { scrollStore } from "../store/scroll";
 
-const MODEL_URL = "/models/katana.glb";
+export const MODEL_URL = "/models/katana.glb";
 
 /** Parent-space distance from a sheathed blade to a fully drawn one. */
 const DRAW_TRAVEL = 1.117;
@@ -20,7 +20,7 @@ export function drawProgress(global: number) {
 }
 
 export function Sword({ mouthRef }: { mouthRef?: RefObject<Object3D | null> }) {
-  const { scene } = useGLTF(MODEL_URL, false, true);
+  const { scene } = useGLTF(MODEL_URL, false, false);
   const model = useMemo(() => scene.clone(true), [scene]);
   const katana = useMemo(() => model.getObjectByName("Katana"), [model]);
   const sheath = useMemo(() => model.getObjectByName("Sheath"), [model]);
@@ -28,38 +28,41 @@ export function Sword({ mouthRef }: { mouthRef?: RefObject<Object3D | null> }) {
   const sheathBase = useMemo(() => sheath?.position.x ?? 0, [sheath]);
 
   const materials = useMemo(() => {
-    const blade = new MeshPhysicalMaterial({
-      color: "#e6eaee",
-      metalness: 1,
-      roughness: 0.16,
-      clearcoat: 0.3,
-      clearcoatRoughness: 0.12,
-      envMapIntensity: 1.3,
+    // One standard material program for all five parts keeps shader compilation
+    // cheap. Clearcoat was subtle on a sword this size and doubled the variants.
+    const blade = new MeshStandardMaterial({
+      color: "#f0f4f8",
+      metalness: 0.55,
+      roughness: 0.2,
     });
-    const handle = new MeshPhysicalMaterial({
+    const handle = new MeshStandardMaterial({
       color: "#191b1d",
       metalness: 0.05,
       roughness: 0.82,
     });
-    const lacquer = new MeshPhysicalMaterial({
+    const lacquer = new MeshStandardMaterial({
       color: "#12100f",
       metalness: 0.2,
       roughness: 0.3,
-      clearcoat: 1,
-      clearcoatRoughness: 0.14,
     });
-    const cord = new MeshPhysicalMaterial({
+    const cord = new MeshStandardMaterial({
       color: "#2a2925",
       metalness: 0,
       roughness: 0.95,
     });
-    const wrap = new MeshPhysicalMaterial({
+    const wrap = new MeshStandardMaterial({
       color: "#3a3226",
       metalness: 0,
       roughness: 0.9,
     });
 
-    return { Katana: blade, KatanaHandle: handle, Sheath: lacquer, Rope: cord, Winding: wrap };
+    return {
+      Katana: blade,
+      KatanaHandle: handle,
+      Sheath: lacquer,
+      Rope: cord,
+      Winding: wrap,
+    };
   }, []);
 
   useEffect(() => {
