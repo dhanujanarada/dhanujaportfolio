@@ -6,7 +6,6 @@ import {
   Color,
   ShaderMaterial,
   SRGBColorSpace,
-  type Mesh,
 } from "three";
 import { useStore } from "zustand";
 
@@ -41,8 +40,10 @@ const FRAGMENT = /* glsl */ `
     vec2 centered = vUv - 0.5;
     float radius = length(centered);
 
-    // Reveal grows outward from the centre; outside it the plane is gone.
-    float alpha = smoothstep(0.02, -0.08, radius - uReveal * 0.62);
+    // Reveal grows outward; 0.78 clears the corner radius (0.707).
+    float disc = uReveal * 0.78;
+    float alpha = 1.0 - smoothstep(disc - 0.06, disc + 0.06, radius);
+    alpha *= smoothstep(0.0, 0.08, uReveal);
     if (alpha < 0.01) discard;
 
     float grain = hash(vUv * 24.0 + uTime * 0.15) - 0.5;
@@ -55,7 +56,7 @@ const FRAGMENT = /* glsl */ `
       texture2D(uCover, warped - vec2(split, 0.0)).b
     );
 
-    float rim = smoothstep(0.035, 0.0, abs(radius - uReveal * 0.62));
+    float rim = 1.0 - smoothstep(0.0, 0.035, abs(radius - disc));
     color += uAccent * rim * 0.8;
 
     gl_FragColor = vec4(color, alpha);
@@ -63,7 +64,6 @@ const FRAGMENT = /* glsl */ `
 `;
 
 export function ProjectHover() {
-  const mesh = useRef<Mesh>(null);
   const material = useRef<ShaderMaterial>(null);
   const pinned = useRef(false);
   const state = useRef({ reveal: 0, rgb: 0 });
@@ -150,7 +150,6 @@ export function ProjectHover() {
 
   return (
     <mesh
-      ref={mesh}
       position={[side * (viewport.width / 2 - 1.15), -viewport.height / 2 + 1.55, 0.2]}
       onPointerOver={(event) => {
         event.stopPropagation();
@@ -162,6 +161,7 @@ export function ProjectHover() {
       }}
       onPointerDown={(event) => {
         event.stopPropagation();
+        if (!window.matchMedia("(pointer: coarse)").matches) return;
         pinned.current = !pinned.current;
         reveal(pinned.current);
       }}

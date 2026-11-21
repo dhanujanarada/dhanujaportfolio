@@ -41,17 +41,13 @@ export default function Home() {
               <SplitText text="Dhanuja" active={active} />
             </h1>
             <p
-              className={`mt-4 max-w-md font-body text-body text-ink/80 transition-opacity duration-500 ${
-                active ? "opacity-100" : "opacity-0"
-              }`}
+              className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
             >
               Hero copy arrives from Sanity. The blade and its saya wait at the
               centre of the frame.
             </p>
             <p
-              className={`mt-10 font-ui text-xs tracking-[0.08em] text-ink/50 transition-opacity duration-700 ${
-                active ? "opacity-100" : "opacity-0"
-              }`}
+              className={`mt-10 font-ui text-xs tracking-[0.08em] text-ink/50 ${fade(active, "slow")}`}
             >
               Keep scrolling
             </p>
@@ -79,9 +75,7 @@ export default function Home() {
                 <SplitText text={project.title} active={active} />
               </h2>
               <p
-                className={`mt-3 font-ui text-xs text-ink/60 transition-opacity duration-500 ${
-                  active ? "opacity-100" : "opacity-0"
-                }`}
+                className={`mt-3 font-ui text-xs text-ink/60 ${fade(active)}`}
               >
                 {project.meta}
               </p>
@@ -100,9 +94,7 @@ export default function Home() {
               <SplitText text="About section" active={active} />
             </h2>
             <p
-              className={`mt-4 max-w-md font-body text-body text-ink/80 transition-opacity duration-500 ${
-                active ? "opacity-100" : "opacity-0"
-              }`}
+              className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
             >
               Timeline, skills, and portrait come from the about singleton in the
               content phase.
@@ -121,9 +113,7 @@ export default function Home() {
               <SplitText text="Contact" active={active} />
             </h2>
             <p
-              className={`mt-4 max-w-md font-body text-body text-ink/80 transition-opacity duration-500 ${
-                active ? "opacity-100" : "opacity-0"
-              }`}
+              className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
             >
               Links and email come from siteSettings later.
             </p>
@@ -143,10 +133,8 @@ function SplitText({ text, active }: { text: string; active: boolean }) {
         <span
           key={`${character}-${index}`}
           aria-hidden
-          className={`inline-block transition-all duration-500 ease-out ${
-            active
-              ? "translate-y-0 opacity-100 blur-0"
-              : "translate-y-2 opacity-0 blur-[3px]"
+          className={`inline-block transition-[opacity,filter] duration-500 ease-out ${
+            active ? "opacity-100 blur-0" : "opacity-0 blur-[3px]"
           }`}
           style={{ transitionDelay: active ? `${index * 18}ms` : "0ms" }}
         >
@@ -155,6 +143,15 @@ function SplitText({ text, active }: { text: string; active: boolean }) {
       ))}
     </span>
   );
+}
+
+const FADE = {
+  fast: "transition-opacity duration-500",
+  slow: "transition-opacity duration-700",
+} as const;
+
+function fade(active: boolean, speed: keyof typeof FADE = "fast") {
+  return `${FADE[speed]} ${active ? "opacity-100" : "opacity-0"}`;
 }
 
 function Section({
