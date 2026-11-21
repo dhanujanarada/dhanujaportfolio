@@ -6,4 +6,4 @@ it is used in the project. Reference repositories (`zen-aperios/a-drift`,
 
 | Asset | Where used | Source | License | Recorded |
 | --- | --- | --- | --- | --- |
-| _none yet_ | — | — | — | — |
+| `studio_small_03_1k.hdr` (drei preset `studio`) | environment lighting for the sword | Poly Haven via `raw.githack.com/pmndrs/drei-assets` — fetched at runtime, not vendored | CC0 (Poly Haven) | 2026-11-21 |

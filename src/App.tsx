@@ -1,9 +1,10 @@
+import { Environment } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import { Outlet } from "react-router";
 
 import { DebugOverlay } from "./components/DebugOverlay";
-import { PlaceholderCube } from "./scene/PlaceholderCube";
+import { SwordRig } from "./scene/SwordRig";
 import { scrollStore } from "./store/scroll";
 
 function InvalidateOnScroll() {
@@ -25,9 +26,10 @@ export function App() {
           gl={{ antialias: true, powerPreference: "high-performance" }}
         >
           <color attach="background" args={["#12100e"]} />
+          <Environment preset="studio" />
           <ambientLight intensity={0.6} />
           <directionalLight position={[3, 4, 5]} intensity={1.4} />
-          <PlaceholderCube />
+          <SwordRig />
           <InvalidateOnScroll />
         </Canvas>
       </div>

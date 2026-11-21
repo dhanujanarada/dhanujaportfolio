@@ -16,11 +16,13 @@ list will be enumerated from Sanity once content exists; see decision 0001.
 hard-coded placeholder text. Rule 6 (all copy from Sanity) applies from the
 content phase onward, and the content model spec is still awaiting approval.
 
-## 2026-11-21 — scene shell is a cube, not a sword
+## 2026-11-21 — sword is procedural and presets are positional
 
-`src/scene/PlaceholderCube.tsx` exists only to prove the scroll chain. No sword,
-no HDRI, no trail, no postprocessing. Quality tiers are also unimplemented: the
-canvas always runs `dpr={[1, 2]}` with `frameloop="demand"`.
+`src/scene/Sword.tsx` draws a stand-in until `/public/models/sword.glb` exists
+(`USE_GLB = false`, ~1.4 units, blade +Y). `SwordRig` maps sections 1–3 to
+slash/thrust/sweep by index because presets do not travel through the CMS yet.
+The trail colour is fixed, not the project accent. The HDRI streams from drei's
+CDN rather than `public/`. Quality tiers are unimplemented; see decision 0003.
 
 ## 2026-11-21 — HUD copy uses the tells the design skill flags
 
