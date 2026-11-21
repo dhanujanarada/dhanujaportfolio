@@ -11,6 +11,7 @@ export default function NotFound() {
     <Page
       kicker="404"
       title="This page is not here"
+      ghost="Lost"
       intro="The address may have changed. The projects and the rest of the CV are still one link away."
     >
       <nav className="flex flex-wrap gap-6 font-ui text-xs text-pearl/70">

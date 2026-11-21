@@ -56,54 +56,81 @@ export function Nav({ settings }: { settings: SiteSettings }) {
   }, [open]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-pearl/10 bg-ink/80 backdrop-blur">
-      <nav
-        aria-label="Primary"
-        className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-4 md:px-8"
-      >
-        <Link
-          to="/"
-          className="font-display text-sm tracking-[0.12em] text-pearl"
-        >
-          Dhanuja
-        </Link>
+    <header className="fixed inset-x-0 top-0 z-40">
+      <span
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-champagne/70 to-transparent"
+      />
 
-        <div className="hidden items-center gap-6 md:flex">
-          {NAV_LINKS.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === "/"}
-              className={({ isActive }) =>
-                `font-ui text-xs tracking-[0.08em] transition-colors ${
-                  isActive ? "text-champagne" : "text-pearl/70 hover:text-pearl"
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
-          {settings.cvFile && (
-            <a
-              href={settings.cvFile}
-              className="font-ui text-xs tracking-[0.08em] text-ink bg-champagne px-3 py-1.5"
-            >
-              CV
-            </a>
-          )}
-        </div>
-
-        <button
-          ref={toggle}
-          type="button"
-          className="font-ui text-xs tracking-[0.08em] text-pearl md:hidden"
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          onClick={() => setOpen((value) => !value)}
+      <div className="border-b border-pearl/10 bg-ink/75 backdrop-blur-md">
+        <nav
+          aria-label="Primary"
+          className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-3.5 md:px-8"
         >
-          {open ? "Close" : "Menu"}
-        </button>
-      </nav>
+          <Link
+            to="/"
+            aria-label="Dhanuja Narada Udurawana — home"
+            className="group flex items-center gap-2.5"
+          >
+            <svg
+              aria-hidden
+              width="18"
+              height="18"
+              viewBox="0 0 20 20"
+              fill="none"
+              className="text-champagne transition-transform duration-500 group-hover:rotate-90"
+            >
+              <path d="M10 1l7 9-7 9-7-9z" stroke="currentColor" />
+              <path
+                d="M10 5l3.5 5L10 15 6.5 10z"
+                fill="currentColor"
+                fillOpacity="0.55"
+              />
+            </svg>
+            <span className="font-display text-[0.78rem] uppercase tracking-[0.24em] text-pearl transition-colors group-hover:text-champagne">
+              Dhanuja
+            </span>
+          </Link>
+
+          <div className="hidden items-center gap-6 md:flex">
+            {NAV_LINKS.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.to === "/"}
+                className={({ isActive }) =>
+                  `nav-link font-display text-[0.66rem] uppercase tracking-[0.2em] transition-colors ${
+                    isActive
+                      ? "text-champagne"
+                      : "text-pearl/70 hover:text-pearl"
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            ))}
+            {settings.cvFile && (
+              <a
+                href={settings.cvFile}
+                className="border border-champagne/50 px-3 py-1.5 font-display text-[0.62rem] uppercase tracking-[0.2em] text-champagne transition-colors hover:bg-champagne hover:text-ink"
+              >
+                CV
+              </a>
+            )}
+          </div>
+
+          <button
+            ref={toggle}
+            type="button"
+            className="border border-pearl/25 px-3 py-1.5 font-display text-[0.62rem] uppercase tracking-[0.2em] text-pearl md:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((value) => !value)}
+          >
+            {open ? "Close" : "Menu"}
+          </button>
+        </nav>
+      </div>
 
       {open && (
         <div
@@ -112,9 +139,9 @@ export function Nav({ settings }: { settings: SiteSettings }) {
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
-          className="border-t border-pearl/10 bg-ink px-5 py-4 md:hidden"
+          className="border-b border-champagne/15 bg-abyss/95 px-5 py-5 backdrop-blur-md md:hidden"
         >
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-4">
             {NAV_LINKS.map((link, index) => (
               <li key={link.to}>
                 <NavLink
@@ -123,12 +150,16 @@ export function Nav({ settings }: { settings: SiteSettings }) {
                   end={link.to === "/"}
                   onClick={() => setOpen(false)}
                   className={({ isActive }) =>
-                    `font-ui text-sm tracking-[0.06em] ${
+                    `flex items-center justify-between font-display text-[0.8rem] uppercase tracking-[0.18em] ${
                       isActive ? "text-champagne" : "text-pearl/80"
                     }`
                   }
                 >
                   {link.label}
+                  <span
+                    aria-hidden
+                    className="h-1.5 w-1.5 rotate-45 border border-champagne/50"
+                  />
                 </NavLink>
               </li>
             ))}
@@ -136,7 +167,7 @@ export function Nav({ settings }: { settings: SiteSettings }) {
               <li>
                 <a
                   href={settings.cvFile}
-                  className="font-ui text-sm tracking-[0.06em] text-champagne"
+                  className="font-display text-[0.8rem] uppercase tracking-[0.18em] text-champagne"
                 >
                   Download CV
                 </a>

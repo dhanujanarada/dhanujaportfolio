@@ -2,6 +2,8 @@ import { Link } from "react-router";
 
 import { getProject, getProjects } from "../cms/content";
 import { Page } from "../components/Page";
+import { RuneDivider } from "../components/RuneDivider";
+import { roman } from "../content/roman";
 import type { Route } from "./+types/projects.$slug";
 
 const SECTION_LABELS: Record<string, string> = {
@@ -38,11 +40,16 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export function meta({ loaderData }: Route.MetaArgs) {
   if (!loaderData) return [{ title: "Project — Dhanuja Narada Udurawana" }];
+  const { project } = loaderData;
+  const description = project.summary.startsWith("[TODO")
+    ? `${project.projectType}. ${project.stack.join(", ")}.`
+    : project.summary;
+
   return [
-    { title: `${loaderData.project.title} — Dhanuja Narada Udurawana` },
-    { name: "description", content: loaderData.project.summary },
-    { property: "og:title", content: loaderData.project.title },
-    { property: "og:description", content: loaderData.project.summary },
+    { title: `${project.title} — Dhanuja Narada Udurawana` },
+    { name: "description", content: description },
+    { property: "og:title", content: project.title },
+    { property: "og:description", content: description },
     { property: "og:type", content: "article" },
   ];
 }
@@ -53,25 +60,39 @@ export default function ProjectDetail({ loaderData }: Route.ComponentProps) {
     (a, b) =>
       SECTION_ORDER.indexOf(a.section) - SECTION_ORDER.indexOf(b.section),
   );
+  const intro = project.summary.startsWith("[TODO")
+    ? undefined
+    : project.summary;
 
   return (
-    <Page kicker={project.period} title={project.title} intro={project.summary}>
-      <dl className="grid gap-4 border-y border-pearl/10 py-6 font-ui text-xs sm:grid-cols-2">
+    <Page
+      kicker={project.period}
+      title={project.title}
+      intro={intro}
+      ghost="Chronicle"
+    >
+      <dl className="grid gap-6 border-y border-champagne/15 py-7 font-ui text-[0.75rem] sm:grid-cols-2">
         <div>
-          <dt className="text-pearl/40">Type</dt>
-          <dd className="mt-1 text-pearl/80">{project.projectType}</dd>
+          <dt className="font-display text-[0.62rem] uppercase tracking-[0.22em] text-champagne/80">
+            Type
+          </dt>
+          <dd className="mt-2 text-pearl/80">{project.projectType}</dd>
         </div>
         <div>
-          <dt className="text-pearl/40">Stack</dt>
-          <dd className="mt-1 text-pearl/80">{project.stack.join(", ")}</dd>
+          <dt className="font-display text-[0.62rem] uppercase tracking-[0.22em] text-champagne/80">
+            Stack
+          </dt>
+          <dd className="mt-2 text-pearl/80">{project.stack.join(", ")}</dd>
         </div>
         {project.repoUrl && (
           <div>
-            <dt className="text-pearl/40">Repository</dt>
-            <dd className="mt-1">
+            <dt className="font-display text-[0.62rem] uppercase tracking-[0.22em] text-champagne/80">
+              Repository
+            </dt>
+            <dd className="mt-2">
               <a
                 href={project.repoUrl}
-                className="text-champagne underline-offset-4 hover:underline"
+                className="text-frost underline-offset-4 hover:text-champagne hover:underline"
                 rel="noreferrer"
               >
                 {project.repoUrl.replace(/^https?:\/\//, "")}
@@ -81,32 +102,42 @@ export default function ProjectDetail({ loaderData }: Route.ComponentProps) {
         )}
         {project.awards.length > 0 && (
           <div>
-            <dt className="text-pearl/40">Awards</dt>
-            <dd className="mt-1 text-pearl/80">
+            <dt className="font-display text-[0.62rem] uppercase tracking-[0.22em] text-champagne/80">
+              Awards
+            </dt>
+            <dd className="mt-2 text-pearl/80">
               {project.awards
-                .map((award) => [award.title, award.note].filter(Boolean).join(" — "))
+                .map((award) =>
+                  [award.title, award.note].filter(Boolean).join(" — "),
+                )
                 .join("; ")}
             </dd>
           </div>
         )}
       </dl>
 
-      <figure className="border border-dashed border-pearl/20 px-6 py-10 text-center font-ui text-xs text-pearl/40">
+      <figure className="border border-dashed border-champagne/20 bg-ink-soft/35 px-6 py-12 text-center font-ui text-xs text-pearl/40">
         [TODO: project image]
       </figure>
 
-      {sections.map((section) => (
-        <section key={section.section}>
-          <h2 className="font-display text-2xl text-pearl">
-            {SECTION_LABELS[section.section] ?? section.section}
-          </h2>
-          <div className="mt-4 space-y-3 font-body text-body leading-relaxed text-pearl/75">
-            {section.body.map((paragraph, index) => (
+      {sections.map((section, index) => (
+        <section key={section.section} className="relative">
+          <div className="flex items-baseline gap-4">
+            <span className="font-display text-[0.62rem] uppercase tracking-[0.2em] text-champagne/60">
+              {roman(index + 1)}
+            </span>
+            <h2 className="font-display text-[clamp(1.6rem,3vw,2.2rem)] text-pearl">
+              {SECTION_LABELS[section.section] ?? section.section}
+            </h2>
+          </div>
+          <div className="mt-4 h-px w-full bg-gradient-to-r from-champagne/35 via-champagne/10 to-transparent" />
+          <div className="mt-5 space-y-4 font-body text-[1.08rem] leading-relaxed text-pearl/75">
+            {section.body.map((paragraph, paragraphIndex) => (
               <p
-                key={index}
+                key={paragraphIndex}
                 className={
                   paragraph.startsWith("[TODO")
-                    ? "font-ui text-xs text-champagne/80"
+                    ? "border-l border-champagne/40 pl-4 font-ui text-xs leading-relaxed text-champagne/80"
                     : undefined
                 }
               >
@@ -117,27 +148,45 @@ export default function ProjectDetail({ loaderData }: Route.ComponentProps) {
         </section>
       ))}
 
+      <RuneDivider className="opacity-50" />
+
       <Link
         to="/"
-        className="inline-block font-ui text-xs tracking-[0.06em] text-pearl/60 hover:text-champagne"
+        className="nav-link inline-block font-display text-[0.66rem] uppercase tracking-[0.2em] text-pearl/60 hover:text-champagne"
       >
         ← Back to the journey
       </Link>
 
       <nav
         aria-label="Project pagination"
-        className="flex flex-wrap justify-between gap-4 border-t border-pearl/10 pt-6 font-ui text-xs"
+        className="flex flex-wrap justify-between gap-6 border-t border-pearl/10 pt-8 font-ui text-xs"
       >
         {previous ? (
-          <Link to={`/projects/${previous.slug}`} className="text-pearl/70 hover:text-champagne">
-            ← {previous.title}
+          <Link
+            to={`/projects/${previous.slug}`}
+            className="group max-w-[45%] text-pearl/60 hover:text-champagne"
+          >
+            <span className="block font-display text-[0.58rem] uppercase tracking-[0.2em] text-pearl/35">
+              Previous chronicle
+            </span>
+            <span className="mt-2 block font-body text-base text-pearl/80 group-hover:text-champagne">
+              ← {previous.title}
+            </span>
           </Link>
         ) : (
           <span />
         )}
         {next ? (
-          <Link to={`/projects/${next.slug}`} className="text-right text-pearl/70 hover:text-champagne">
-            {next.title} →
+          <Link
+            to={`/projects/${next.slug}`}
+            className="group max-w-[45%] text-right text-pearl/60 hover:text-champagne"
+          >
+            <span className="block font-display text-[0.58rem] uppercase tracking-[0.2em] text-pearl/35">
+              Next chronicle
+            </span>
+            <span className="mt-2 block font-body text-base text-pearl/80 group-hover:text-champagne">
+              {next.title} →
+            </span>
           </Link>
         ) : (
           <span />
