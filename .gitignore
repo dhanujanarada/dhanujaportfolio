@@ -2,6 +2,7 @@ node_modules/
 build/
 dist/
 .react-router/
+.vercel/
 .cache/
 
 .env
