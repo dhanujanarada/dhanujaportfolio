@@ -66,6 +66,20 @@ package's docs or types in `node_modules/`, and heed deprecation notices.
     never copy its code or assets. Reimplement ideas, and note in the docs which idea came from where.
 14. Third-party models, fonts, and textures must have a recorded license in `docs/ASSETS.md` before use.
 
+## Quality and accessibility
+15. Skills live in `.agents/skills/<name>/SKILL.md`. Before each task, read the SKILL.md of
+    every skill the prompt names, and open your reply by listing which you loaded and a
+    one-line summary of what each one tells you. If a named skill is missing, say so.
+    If a skill conflicts with these rules or my stated direction, these rules and my
+    direction win.
+16. Animation ownership: GSAP + ScrollTrigger own all scroll-linked and scene motion.
+    `motion-framer` may be used ONLY for small DOM micro-interactions (button hover,
+    menu open/close) and never on elements GSAP or the scene controls.
+17. Skill roles: `grill-me` / `grill-with-docs` before a phase (clarify), `implement` /
+    `implement-spec` during it (build, honoring the review protocol), `code-review` after
+    it, `diagnosing-bugs` when something breaks, `improve-codebase-architecture` at phase
+    ends, `wait-what` whenever a result is surprising or contradicts expectations.
+
 ## Documentation
 
 - When finishing a build step, update the matching docs in the same commit.
