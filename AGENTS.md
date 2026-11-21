@@ -79,7 +79,14 @@ package's docs or types in `node_modules/`, and heed deprecation notices.
     `implement-spec` during it (build, honoring the review protocol), `code-review` after
     it, `diagnosing-bugs` when something breaks, `improve-codebase-architecture` at phase
     ends, `wait-what` whenever a result is surprising or contradicts expectations.
-
+18. Never invent facts. Every claim, date, metric, or quote on the site must come from
+    `docs/content/cv-data.md` or from me. Where a case study needs detail the CV doesn't
+    have, write a clearly marked placeholder (e.g. `[TODO: results / metrics]`) and list
+    all placeholders in `docs/content/TODO.md`.
+19. Privacy: do not publish my phone number in page text or the HTML source. Use the
+    email, LinkedIn, and GitHub links, plus a contact form or an obfuscated mailto.
+20. Routing: the Canvas stays mounted across all routes. Page changes use one GSAP timeline
+    (smoke wipe or sword slash), never a full remount.
 ## Documentation
 
 - When finishing a build step, update the matching docs in the same commit.
