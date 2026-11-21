@@ -22,10 +22,12 @@ export function Halo() {
 
   return (
     <>
-      <mesh ref={setSun} position={[2.1, 1.9, -2.4]}>
-        <sphereGeometry args={[0.28, 16, 16]} />
-        <meshBasicMaterial color="#fff1cf" toneMapped={false} />
-      </mesh>
+      {settings.godRays && (
+        <mesh ref={setSun} position={[2.1, 1.9, -2.4]}>
+          <sphereGeometry args={[0.28, 16, 16]} />
+          <meshBasicMaterial color="#fff1cf" toneMapped={false} />
+        </mesh>
+      )}
 
       {settings.bloom && (
         <EffectComposer multisampling={0}>

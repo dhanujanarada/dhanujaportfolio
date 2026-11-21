@@ -16,7 +16,14 @@ import { scrollStore } from "./store/scroll";
 function InvalidateOnScroll() {
   const invalidate = useThree((state) => state.invalidate);
 
-  useEffect(() => scrollStore.subscribe(() => invalidate()), [invalidate]);
+  useEffect(
+    () =>
+      scrollStore.subscribe(() => {
+        // Low tier is a held frame; scrolling must not wake the canvas.
+        if (qualityStore.getState().tier !== "low") invalidate();
+      }),
+    [invalidate],
+  );
 
   return null;
 }
@@ -52,8 +59,9 @@ function QualityMonitor() {
 
     const frameMs = (total.current / frames.current) * 1000;
     const tier = frameMs > 24 ? "low" : frameMs > 19 ? "medium" : "high";
-    setQuality(tier, frameMs);
     done.current = true;
+    // Leave the frame callback before touching React-visible state (rule 2).
+    window.setTimeout(() => setQuality(tier, frameMs), 0);
   });
 
   return null;

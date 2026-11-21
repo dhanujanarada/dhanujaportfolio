@@ -1,8 +1,10 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import type { Group, Object3D } from "three";
+import { useStore } from "zustand";
 
 import { scrollStore } from "../store/scroll";
+import { qualityStore } from "./quality";
 import { Sparks } from "./Sparks";
 import { Sword, drawProgress } from "./Sword";
 
@@ -20,6 +22,18 @@ export function SwordRig() {
   const mouth = useRef<Object3D>(null);
   const reducedMotion = useRef(false);
   const invalidate = useThree((state) => state.invalidate);
+  const tier = useStore(qualityStore, (state) => state.tier);
+
+  useEffect(() => {
+    if (tier !== "medium") return;
+
+    // Demand rendering means a throttled invalidation needs a timer of its own.
+    const id = window.setInterval(() => {
+      if (!reducedMotion.current) invalidate();
+    }, 1000 / 30);
+
+    return () => window.clearInterval(id);
+  }, [tier, invalidate]);
 
   useEffect(() => {
     const query = window.matchMedia(REDUCED_MOTION_QUERY);
@@ -57,7 +71,7 @@ export function SwordRig() {
 
     object.position.z = storm * 1.5;
 
-    if (!reducedMotion.current) invalidate();
+    if (!reducedMotion.current && tier === "high") invalidate();
   });
 
   return (
