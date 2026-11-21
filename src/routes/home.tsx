@@ -176,7 +176,7 @@ function ProjectCard({
         />
         <div className="flex items-baseline justify-between gap-4">
           <p className="font-display text-[0.68rem] uppercase tracking-[0.28em] text-leather">
-            Project {roman(index + 2)}
+            Project {String(index + 1).padStart(2, "0")}
           </p>
           <p className="font-ui text-[0.68rem] tracking-[0.04em] text-leather/90">
             {project.period}

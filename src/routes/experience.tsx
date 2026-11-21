@@ -34,14 +34,9 @@ export default function ExperiencePage({
 
         {experience.map((entry) => (
           <div key={entry.id} className="mt-10">
-            <div className="flex flex-wrap items-baseline justify-between gap-3">
-              <h3 className="font-display text-[clamp(1.4rem,2.4vw,1.9rem)] text-pearl">
-                {entry.company}
-              </h3>
-              <span className="font-display text-[0.6rem] uppercase tracking-[0.2em] text-champagne/55">
-                {entry.roles[0]?.start} – {entry.roles[0]?.end}
-              </span>
-            </div>
+            <h3 className="font-display text-[clamp(1.4rem,2.4vw,1.9rem)] text-pearl">
+              {entry.company}
+            </h3>
 
             <div className="timeline mt-8 space-y-9">
               {entry.roles.map((role) => (

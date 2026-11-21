@@ -308,7 +308,7 @@
     line-height: 0.75;
     letter-spacing: 0.02em;
     color: transparent;
-    -webkit-text-stroke: 1px rgba(201, 168, 106, 0.18);
+    -webkit-text-stroke: 1px rgba(201, 168, 106, 0.26);
     text-shadow: 0 0 60px rgba(201, 168, 106, 0.05);
     user-select: none;
     pointer-events: none;
