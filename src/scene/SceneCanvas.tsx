@@ -6,6 +6,7 @@ import { useStore } from "zustand";
 import { ProjectHover } from "./ProjectHover";
 import { qualityStore, setQuality, TIER_SETTINGS } from "./quality";
 import { Smoke } from "./Smoke";
+import { StudioEnvironment } from "./StudioEnvironment";
 import { MODEL_URL } from "./Sword";
 import { SwordRig } from "./SwordRig";
 import { scrollStore } from "../store/scroll";
@@ -122,6 +123,8 @@ export default function SceneCanvas({ ambient }: { ambient: boolean }) {
         intensity={0.6}
         color="#9fc3e6"
       />
+
+      {tier !== "low" && <StudioEnvironment />}
 
       <Suspense fallback={null}>
         <SwordRig ambient={ambient} />
