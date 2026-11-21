@@ -44,3 +44,21 @@ No browser exists in this environment. `QualityMonitor` measures a 1.5 s frame
 sample after a 0.5 s warm-up and the overlay prints it, but no tier has been
 measured on real hardware. Every visual claim in this phase is code-level only;
 the katana draw, paper tear, smoke, hover and wisp still need a human look.
+
+## 2026-11-21 — routes read the CV file, not Sanity
+
+No Sanity project ID or token exists, so `src/cms/content.ts` falls back to
+`src/content/cv.ts` and the seed has never run. The build succeeds and every route
+prerenders from the CV file. Decision 0005 records this; it must be closed by setting
+the env vars and running the seed before deploy.
+
+## 2026-11-21 — preset strike and index hover are not wired
+
+“Read the case study” navigates with the shared route wipe, but the project's
+`transitionPreset` strike does not play first. `/projects` renders DOM cards; the shader
+cover plane exists only on the home journey. Both are listed in `docs/content/TODO.md`.
+
+## 2026-11-21 — sitemap and robots need SITE_URL
+
+The Vite plugin skips `sitemap.xml` and `robots.txt` when `SITE_URL` is absent rather
+than inventing a domain. Prerendered HTML, per-page titles and JSON-LD are present.
