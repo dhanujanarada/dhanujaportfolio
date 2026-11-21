@@ -26,6 +26,11 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "note",
+      type: "string",
+      description: "Optional committee or remit detail from the CV.",
+    }),
+    defineField({
       name: "order",
       type: "number",
       validation: (rule) => rule.required().integer().min(0),

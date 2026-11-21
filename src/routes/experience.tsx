@@ -1,14 +1,12 @@
 import { getContent } from "../cms/content";
 import { Page } from "../components/Page";
+import { pageMeta } from "../content/meta";
 
 export function meta() {
-  return [
-    { title: "Experience — Dhanuja Narada Udurawana" },
-    {
-      name: "description",
-      content: "Industry experience at HCL Technologies and BEng education.",
-    },
-  ];
+  return pageMeta(
+    "Experience — Dhanuja Narada Udurawana",
+    "Industry experience at HCL Technologies and BEng education.",
+  );
 }
 
 export async function loader() {
@@ -44,24 +42,28 @@ export default function ExperiencePage({
         </section>
       ))}
 
-      {loaderData.education.map((entry) => (
-        <section key={entry.id}>
+      {loaderData.education.length > 0 && (
+        <section>
           <h2 className="font-display text-2xl text-pearl">Education</h2>
-          <div className="mt-6 border-l border-pearl/15 pl-6">
-            <h3 className="font-display text-lg text-pearl">{entry.degree}</h3>
-            <p className="mt-1 font-ui text-xs text-champagne">
-              {entry.start} – {entry.end} · {entry.classification}
-            </p>
-            <p className="mt-2 font-body text-base text-pearl/75">
-              {entry.institution}
-            </p>
-            <p className="mt-4 font-ui text-xs leading-relaxed text-pearl/70">
-              Dissertation: {entry.dissertationTitle}
-              {entry.dissertationNote ? ` (${entry.dissertationNote})` : ""}
-            </p>
-          </div>
+          {loaderData.education.map((entry) => (
+            <div key={entry.id} className="mt-6 border-l border-pearl/15 pl-6">
+              <h3 className="font-display text-lg text-pearl">
+                {entry.degree}
+              </h3>
+              <p className="mt-1 font-ui text-xs text-champagne">
+                {entry.start} – {entry.end} · {entry.classification}
+              </p>
+              <p className="mt-2 font-body text-base text-pearl/75">
+                {entry.institution}
+              </p>
+              <p className="mt-4 font-ui text-xs leading-relaxed text-pearl/70">
+                Dissertation: {entry.dissertationTitle}
+                {entry.dissertationNote ? ` (${entry.dissertationNote})` : ""}
+              </p>
+            </div>
+          ))}
         </section>
-      ))}
+      )}
     </Page>
   );
 }

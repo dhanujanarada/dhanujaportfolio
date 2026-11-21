@@ -62,6 +62,7 @@ async function run() {
       _type: "about",
       headline: cvContent.about.headline,
       summary: cvContent.about.summary,
+      location: cvContent.about.location,
     },
     {
       _id: "siteSettings",
@@ -114,7 +115,14 @@ async function run() {
     ...cvContent.education.map((entry) => ({
       _id: entry.id,
       _type: "education",
-      ...entry,
+      institution: entry.institution,
+      degree: entry.degree,
+      classification: entry.classification,
+      start: entry.start,
+      end: entry.end,
+      dissertationTitle: entry.dissertationTitle,
+      dissertationNote: entry.dissertationNote,
+      order: entry.order,
     })),
     ...cvContent.skills.map((group) => ({
       _id: group.id,
@@ -126,12 +134,20 @@ async function run() {
     ...cvContent.certifications.map((entry) => ({
       _id: entry.id,
       _type: "certification",
-      ...entry,
+      title: entry.title,
+      issuer: entry.issuer,
+      note: entry.note,
+      order: entry.order,
     })),
     ...cvContent.leadership.map((entry) => ({
       _id: entry.id,
       _type: "leadership",
-      ...entry,
+      role: entry.role,
+      organization: entry.organization,
+      start: entry.start,
+      end: entry.end,
+      note: entry.note,
+      order: entry.order,
     })),
   ];
 

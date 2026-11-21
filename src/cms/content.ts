@@ -32,7 +32,6 @@ function readEnv(key: string): string | undefined {
 const projectId = readEnv("VITE_SANITY_PROJECT_ID");
 const dataset = readEnv("VITE_SANITY_DATASET") ?? "production";
 
-export const usingSanity = Boolean(projectId);
 
 const client = projectId
   ? createClient({
@@ -88,9 +87,11 @@ export async function getContent(): Promise<Content> {
     awards,
     leadership,
   ] = await Promise.all([
-    client.fetch<About | null>(`*[_id == "about"][0]{ headline, summary }`),
+    client.fetch<About | null>(
+      `*[_id == "about"][0]{ headline, summary, location, "portrait": portrait{ "url": asset->url, alt } }`,
+    ),
     client.fetch<SiteSettings | null>(
-      `*[_id == "siteSettings"][0]{ title, description, email, linkedin, github }`,
+      `*[_id == "siteSettings"][0]{ title, description, email, linkedin, github, "cvFile": cvFile.asset->url }`,
     ),
     client.fetch<(Project & { caseStudy?: RawBlock[] })[]>(
       `*[_type == "project"] | order(order asc) { ${PROJECT_FIELDS} }`,
@@ -111,7 +112,7 @@ export async function getContent(): Promise<Content> {
       `*[_type == "award"] | order(order asc) { "id": _id, title, event, note, year, order }`,
     ),
     client.fetch<Leadership[]>(
-      `*[_type == "leadership"] | order(order asc) { "id": _id, role, organization, start, end, order }`,
+      `*[_type == "leadership"] | order(order asc) { "id": _id, role, organization, start, end, note, order }`,
     ),
   ]);
 
@@ -145,6 +146,11 @@ export async function getProject(slug: string): Promise<Project | undefined> {
 /** Used by prerender. Duplicated slugs fail the build instead of silently winning. */
 export async function getProjectSlugs(): Promise<string[]> {
   const projects = await getProjects();
+  if (projects.length === 0) {
+    throw new Error(
+      "No projects returned by the content driver. Prerendering a project-less site is a build failure, not a fallback.",
+    );
+  }
   const slugs = projects.map((project) => project.slug);
   const duplicate = slugs.find((slug, index) => slugs.indexOf(slug) !== index);
   if (duplicate) {

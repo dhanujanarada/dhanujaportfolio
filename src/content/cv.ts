@@ -85,12 +85,14 @@ export type Leadership = {
   organization: string;
   start: string;
   end: string;
+  note?: string;
   order: number;
 };
 
 export type About = {
   headline: string;
   summary: string;
+  location?: string;
   bio?: string[];
   portrait?: { url: string; alt: string };
 };
@@ -116,7 +118,7 @@ export type Content = {
   leadership: Leadership[];
 };
 
-const CASES = (approach: string[]): CaseBlock[] => [
+const caseSections = (approach: string[]): CaseBlock[] => [
   { section: "problem", body: ["[TODO: problem framing]"] },
   { section: "approach", body: approach },
   { section: "architecture", body: ["[TODO: architecture detail]"] },
@@ -130,6 +132,7 @@ export const cvContent: Content = {
       "Machine Learning Engineer | AI Engineer | AI/ML Researcher | Data Scientist",
     summary:
       "Machine Learning Engineer with a First Class Honours BEng in Software Engineering (University of Westminster) and a Distinction-graded dissertation in generative audio AI using Flow Matching and Diffusion Transformers (DiT). Builds end-to-end deep learning, LLM, RAG, computer vision and NLP systems in Python, PyTorch and TensorFlow, from dataset construction and model training to deployment behind FastAPI REST APIs. 2+ years of industry software development experience at HCL Technologies.",
+    location: "Sri Lanka",
   },
   settings: {
     title: "Dhanuja Narada Udurawana",
@@ -161,7 +164,7 @@ export const cvContent: Content = {
       accent: "#c9a86a",
       order: 1,
       transitionPreset: "slash",
-      caseStudy: CASES([
+      caseStudy: caseSections([
         "Designed and trained a generative AI model for audio genre transfer using Flow Matching with a Diffusion Transformer (DiT), conditioned via FiLM and RoPE attention",
         "Engineered an end-to-end audio pipeline: audio-to-MIDI transcription, FluidSynth synthesis, DAC encoding/decoding and chunked latent inference",
         "Constructed a novel paired source-target DAC latent dataset for supervised genre-transfer training",
@@ -188,7 +191,7 @@ export const cvContent: Content = {
       accent: "#7f9ec4",
       order: 2,
       transitionPreset: "thrust",
-      caseStudy: CASES([
+      caseStudy: caseSections([
         "Built a desktop app for hardware-free presentation control using real-time computer vision",
         "Real-time hand gesture recognition with OpenCV and MediaPipe, training a custom deep learning model for hand pose detection",
         "Laser pointer tracking and a keystone correction algorithm using Shi-Tomasi corner detection",
@@ -208,7 +211,7 @@ export const cvContent: Content = {
       accent: "#a98a9e",
       order: 3,
       transitionPreset: "sweep",
-      caseStudy: CASES([
+      caseStudy: caseSections([
         "RAG pipeline with LangChain and Google Gemini 2.0 for contextual question answering over a PDF corpus",
         "FAISS vector indexing with Maximal Marginal Relevance (MMR) search for relevant, non-redundant context",
       ]),
@@ -227,7 +230,7 @@ export const cvContent: Content = {
       accent: "#8fae9b",
       order: 4,
       transitionPreset: "spiral",
-      caseStudy: CASES([
+      caseStudy: caseSections([
         "K-means clustering with PCA on a vehicle dataset; evaluated with silhouette analysis and cluster validity indices",
         "Autoregressive (AR) and NARX MLP neural network models in R for electricity demand time-series forecasting, with hyperparameter tuning",
       ]),
@@ -428,6 +431,7 @@ export const cvContent: Content = {
       organization: "IIT Toastmasters Club",
       start: "2023",
       end: "2025",
+      note: "Membership & PR Committee",
       order: 1,
     },
     {

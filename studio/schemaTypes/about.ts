@@ -17,6 +17,10 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "location",
+      type: "string",
+    }),
+    defineField({
       name: "bio",
       type: "array",
       of: [defineArrayMember({ type: "block" })],

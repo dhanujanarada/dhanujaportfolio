@@ -1,14 +1,12 @@
 import { getContent } from "../cms/content";
 import { Page } from "../components/Page";
+import { pageMeta } from "../content/meta";
 
 export function meta() {
-  return [
-    { title: "Credentials — Dhanuja Narada Udurawana" },
-    {
-      name: "description",
-      content: "Certifications, awards and leadership from the CV.",
-    },
-  ];
+  return pageMeta(
+    "Credentials — Dhanuja Narada Udurawana",
+    "Certifications, awards and leadership from the CV.",
+  );
 }
 
 export async function loader() {
@@ -80,6 +78,11 @@ export default function Credentials({
               <p className="mt-1 font-ui text-xs text-champagne">
                 {entry.organization} · {entry.start}–{entry.end}
               </p>
+              {entry.note && (
+                <p className="mt-1 font-body text-base text-pearl/70">
+                  {entry.note}
+                </p>
+              )}
             </li>
           ))}
         </ul>
