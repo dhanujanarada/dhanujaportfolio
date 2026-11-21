@@ -85,6 +85,7 @@ export default defineConfig({
       "zustand",
       "zustand/vanilla",
       "three",
+      "three/examples/jsm/environments/RoomEnvironment.js",
       "@react-three/fiber",
       "@react-three/drei",
       "@react-three/postprocessing",
