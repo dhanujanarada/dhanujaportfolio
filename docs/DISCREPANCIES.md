@@ -10,22 +10,37 @@ URLs, not dynamic patterns, so `/project/<slug>` currently falls through to the 
 fallback (`build/client/__spa-fallback.html`) and hydrates client-side. The slug
 list will be enumerated from Sanity once content exists; see decision 0001.
 
-## 2026-11-21 — placeholder copy in routes
+## 2026-11-21 — placeholder copy and a draft content spec
 
 `src/routes/home.tsx` (six sections) and `src/routes/project.tsx` contain
 hard-coded placeholder text. Rule 6 (all copy from Sanity) applies from the
-content phase onward, and the content model spec is still awaiting approval.
+content phase onward. `docs/specs/content-model.md` is still unapproved and
+unimplemented.
 
-## 2026-11-21 — sword is procedural and presets are positional
+## 2026-11-21 — hover cover and accent are procedural
 
-`src/scene/Sword.tsx` draws a stand-in until `/public/models/sword.glb` exists
-(`USE_GLB = false`, ~1.4 units, blade +Y). `SwordRig` maps sections 1–3 to
-slash/thrust/sweep by index because presets do not travel through the CMS yet.
-The trail colour is fixed, not the project accent. The HDRI streams from drei's
-CDN rather than `public/`. Quality tiers are unimplemented; see decision 0003.
+`ProjectHover` paints its own cover (`makeCover`) and uses three hard-coded
+accents. Sanity's `cover`, `accent`, and project order have not been wired, so
+the hover does not yet reflect real projects.
 
-## 2026-11-21 — HUD copy uses the tells the design skill flags
+## 2026-11-21 — hover has no affordance, and low tier removes it
 
-The section labels are tracked ALL-CAPS eyebrows with mono micro-copy and
-middle-dot separators, which `frontend-design` names as templated defaults. To be
-replaced deliberately in the HUD/typography phase, not inherited by accident.
+The cover plane lives in the empty corner opposite the paper and is discoverable
+only by moving the cursor there. There is no label or cursor change until the
+pointer is already over it. On the low quality tier the plane is not rendered at
+all, with no CSS fallback — so a slow device loses the feature rather than
+getting a cheaper version.
+
+## 2026-11-21 — smoke is distance-faded, not depth-faded
+
+`Smoke.tsx` fades billboards by camera distance and radial mask. True soft
+particles need the scene depth buffer, which the postprocessing composer does not
+expose to a custom material. This is a deliberate substitution, not a completed
+soft-particle implementation.
+
+## 2026-11-21 — frame time and visuals are unverified
+
+No browser exists in this environment. `QualityMonitor` measures a 1.5 s frame
+sample after a 0.5 s warm-up and the overlay prints it, but no tier has been
+measured on real hardware. Every visual claim in this phase is code-level only;
+the katana draw, paper tear, smoke, hover and wisp still need a human look.
