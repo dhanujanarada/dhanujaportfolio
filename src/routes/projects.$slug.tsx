@@ -117,6 +117,13 @@ export default function ProjectDetail({ loaderData }: Route.ComponentProps) {
         </section>
       ))}
 
+      <Link
+        to="/"
+        className="inline-block font-ui text-xs tracking-[0.06em] text-pearl/60 hover:text-champagne"
+      >
+        ← Back to the journey
+      </Link>
+
       <nav
         aria-label="Project pagination"
         className="flex flex-wrap justify-between gap-4 border-t border-pearl/10 pt-6 font-ui text-xs"

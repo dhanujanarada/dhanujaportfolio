@@ -2,16 +2,13 @@ import { Link } from "react-router";
 
 import { Page } from "../components/Page";
 import { getProjects } from "../cms/content";
+import { pageMeta } from "../content/meta";
 
 export function meta() {
-  return [
-    { title: "Projects — Dhanuja Narada Udurawana" },
-    {
-      name: "description",
-      content:
-        "Machine learning, generative audio, computer vision and data science projects.",
-    },
-  ];
+  return pageMeta(
+    "Projects — Dhanuja Narada Udurawana",
+    "Machine learning, generative audio, computer vision and data science projects.",
+  );
 }
 
 export async function loader() {

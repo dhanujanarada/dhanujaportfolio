@@ -2,15 +2,13 @@ import { useState, type FormEvent } from "react";
 
 import { getContent } from "../cms/content";
 import { Page } from "../components/Page";
+import { pageMeta } from "../content/meta";
 
 export function meta() {
-  return [
-    { title: "Contact — Dhanuja Narada Udurawana" },
-    {
-      name: "description",
-      content: "Email, LinkedIn and GitHub. No phone number is published.",
-    },
-  ];
+  return pageMeta(
+    "Contact — Dhanuja Narada Udurawana",
+    "Email, LinkedIn and GitHub.",
+  );
 }
 
 export async function loader() {

@@ -2,7 +2,8 @@ import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
 import { useStore } from "zustand";
 
-import { getProjects } from "../cms/content";
+import { getContent } from "../cms/content";
+import { pageMeta } from "../content/meta";
 import { useScrollEngine } from "../motion/useScrollEngine";
 import { scrollStore } from "../store/scroll";
 import { strikeStore, type StrikePreset } from "../store/strike";
@@ -15,34 +16,34 @@ const TEAR_PATH =
   "L44 77 L38 71 L32 78 L26 72 L20 78 L14 73 L9 77 L4 71 L1 62 Z";
 
 export function meta() {
-  return [
-    { title: "Dhanuja Narada Udurawana — Machine Learning Engineer" },
-    {
-      name: "description",
-      content:
-        "Machine Learning Engineer building deep learning, LLM, RAG, computer vision and NLP systems.",
-    },
-  ];
+  return pageMeta(
+    "Dhanuja Narada Udurawana — Machine Learning Engineer",
+    "Machine Learning Engineer building deep learning, LLM, RAG, computer vision and NLP systems.",
+  );
 }
 
 export async function loader() {
-  return { projects: await getProjects() };
+  const content = await getContent();
+  return {
+    projects: [...content.projects].sort((a, b) => a.order - b.order),
+    about: content.about,
+  };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   useScrollEngine();
   const activeIndex = useStore(scrollStore, (state) => state.activeIndex);
-  const { projects } = loaderData;
+  const { projects, about } = loaderData;
 
   return (
-    <main className="pointer-events-none relative text-pearl">
+    <main id="main" className="pointer-events-none relative text-pearl">
       <PaperDefs />
 
       <Section id="hero" index={0} activeIndex={activeIndex} align="left">
         {(active) => (
           <>
             <p className="font-ui text-xs tracking-[0.08em] text-champagne">
-              Machine Learning Engineer
+              {about.headline}
             </p>
             <h1 className="mt-3 max-w-3xl font-display text-display font-medium text-ink">
               <SplitText text="Dhanuja" active={active} />
@@ -50,8 +51,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             <p
               className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
             >
-              First Class Honours BEng, Distinction dissertation in generative
-              audio AI, and 2+ years building software in industry.
+              {about.summary}
             </p>
             <p
               className={`mt-10 font-ui text-xs tracking-[0.08em] text-ink/50 ${fade(active, "slow")}`}
@@ -111,8 +111,8 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             <p
               className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
             >
-              Education, industry experience and six skill groups, all readable
-              without the sword.
+              Education, experience, credentials and contact, each on its own
+              page and readable without the sword.
             </p>
             <Link
               to="/about"
@@ -187,14 +187,14 @@ function CaseStudyCta({
     window.setTimeout(() => navigate(`/projects/${slug}`), 450);
   }
 
+  if (!visible) return null;
+
   return (
     <Link
       to={`/projects/${slug}`}
       onClick={onClick}
       aria-label={`Read the ${title} case study`}
-      className={`inline-block border border-ink/30 px-4 py-2 font-ui text-xs tracking-[0.06em] text-ink transition-opacity duration-300 hover:border-ink ${
-        visible ? "opacity-100" : "pointer-events-none opacity-0"
-      }`}
+      className="inline-block border border-ink/30 px-4 py-2 font-ui text-xs tracking-[0.06em] text-ink transition-opacity duration-300 hover:border-ink"
     >
       Read the case study →
     </Link>
