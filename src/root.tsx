@@ -1,9 +1,21 @@
 import type { ReactNode } from "react";
-import { Links, Meta, Scripts, ScrollRestoration } from "react-router";
+import {
+  Links,
+  Meta,
+  Scripts,
+  ScrollRestoration,
+  useLoaderData,
+} from "react-router";
 
 import { App } from "./App";
+import { getContent } from "./cms/content";
 
 import "./app.css";
+
+export async function loader() {
+  const content = await getContent();
+  return { settings: content.settings, about: content.about };
+}
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -24,7 +36,7 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 
 export default function Root() {
-  // App owns the persistent <Canvas>, outside the router outlet, so it never
-  // unmounts across navigations (AGENTS.md rule 1).
-  return <App />;
+  const { settings, about } = useLoaderData<typeof loader>();
+
+  return <App settings={settings} headline={about.headline} />;
 }

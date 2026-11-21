@@ -13,7 +13,7 @@ import { scrollStore } from "../store/scroll";
 import { qualityStore } from "./quality";
 
 /** Placeholders until Sanity supplies `accent` and `cover`. */
-const PROJECT_ACCENTS = ["#c9a86a", "#7f9ec4", "#a98a9e"];
+const PROJECT_ACCENTS = ["#c9a86a", "#7f9ec4", "#a98a9e", "#8fae9b"];
 
 const VERTEX = /* glsl */ `
   varying vec2 vUv;
@@ -74,7 +74,7 @@ export function ProjectHover() {
   const tier = useStore(qualityStore, (store) => store.tier);
 
   const projectIndex = activeIndex - 1;
-  const visible = projectIndex >= 0 && projectIndex < 3 && tier !== "low";
+  const visible = projectIndex >= 0 && projectIndex < 4 && tier !== "low";
   const accent = PROJECT_ACCENTS[projectIndex] ?? PROJECT_ACCENTS[0];
 
   const cover = useMemo(() => makeCover(accent), [accent]);
@@ -128,9 +128,13 @@ export function ProjectHover() {
         0,
       );
 
-    const title = document.querySelector<HTMLElement>(
-      `[data-section="${sectionIdFor(activeIndex)}"] [data-hover-title]`,
-    );
+    const { activeIndex, sections } = scrollStore.getState();
+    const sectionId = sections[activeIndex]?.id;
+    const title = sectionId
+      ? document.querySelector<HTMLElement>(
+          `[data-section="${sectionId}"] [data-hover-title]`,
+        )
+      : null;
     if (title) {
       const chars = title.querySelectorAll("span span");
       gsap.killTweensOf(chars);
@@ -177,12 +181,6 @@ export function ProjectHover() {
       />
     </mesh>
   );
-}
-
-function sectionIdFor(index: number) {
-  return ["hero", "project-one", "project-two", "project-three", "about", "contact"][
-    index
-  ];
 }
 
 /** Procedural stand-in cover: ink ground, accent bloom, diagonal rule, grain. */

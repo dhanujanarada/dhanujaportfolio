@@ -82,7 +82,7 @@ const FRAGMENT = /* glsl */ `
 
 const COUNT_BY_TIER = (tier: QualityTier) => TIER_SETTINGS[tier].smokeCount;
 
-export function Smoke() {
+export function Smoke({ calm = false }: { calm?: boolean }) {
   const tier = useStore(qualityStore, (state) => state.tier);
   const count = COUNT_BY_TIER(tier);
   const material = useRef<ShaderMaterial>(null);
@@ -143,7 +143,8 @@ export function Smoke() {
     velocity.current += (Math.min(raw, 3) - velocity.current) * Math.min(1, delta * 4);
 
     shader.uniforms.uTime.value = state.clock.elapsedTime;
-    shader.uniforms.uVelocity.value = velocity.current;
+    shader.uniforms.uVelocity.value = calm ? 0 : velocity.current;
+    shader.uniforms.uOpacity.value = calm ? 0.06 : 0.16;
   });
 
   if (!geometry) return null;

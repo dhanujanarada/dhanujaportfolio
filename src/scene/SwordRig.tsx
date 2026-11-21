@@ -17,7 +17,7 @@ const CENTRE_OFFSET = 0.9;
 /** Resting height: the blade and saya sit on the centre line. */
 const CENTRE_Y = 0.04;
 
-export function SwordRig() {
+export function SwordRig({ ambient = false }: { ambient?: boolean }) {
   const group = useRef<Group>(null);
   const mouth = useRef<Object3D>(null);
   const reducedMotion = useRef(false);
@@ -25,7 +25,7 @@ export function SwordRig() {
   const tier = useStore(qualityStore, (state) => state.tier);
 
   useEffect(() => {
-    if (tier !== "medium") return;
+    if (tier !== "medium" || ambient) return;
 
     // Demand rendering means a throttled invalidation needs a timer of its own.
     const id = window.setInterval(() => {
@@ -50,6 +50,13 @@ export function SwordRig() {
   useFrame((state) => {
     const object = group.current;
     if (!object) return;
+
+    if (ambient) {
+      object.scale.setScalar(SCALE);
+      object.position.set(CENTRE_OFFSET, CENTRE_Y, 0);
+      object.rotation.z = 0.04;
+      return;
+    }
 
     const { global } = scrollStore.getState();
     const draw = drawProgress(global);
@@ -79,7 +86,7 @@ export function SwordRig() {
       <group ref={group} name="sword-rig">
         <Sword mouthRef={mouth} />
       </group>
-      <Sparks mouth={mouth} />
+      {!ambient && <Sparks mouth={mouth} />}
     </>
   );
 }

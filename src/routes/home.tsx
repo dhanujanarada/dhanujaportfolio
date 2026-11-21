@@ -1,17 +1,12 @@
-import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Link } from "react-router";
 import { useStore } from "zustand";
 
+import { getProjects } from "../cms/content";
 import { useScrollEngine } from "../motion/useScrollEngine";
 import { scrollStore } from "../store/scroll";
+import type { Route } from "./+types/home";
 
-const placeholderProjects = [
-  { id: "project-one", title: "Project One", meta: "2025, frontend" },
-  { id: "project-two", title: "Project Two", meta: "2024, full stack" },
-  { id: "project-three", title: "Project Three", meta: "2024, design system" },
-];
-
-/** A slab torn open along a diagonal — the paper the copy is printed on. */
 const TEAR_PATH =
   "M0 48 L3 35 L8 39 L13 30 L18 34 L24 26 L30 31 L36 24 L42 29 L48 22 " +
   "L54 28 L60 21 L66 27 L72 23 L78 30 L84 26 L90 32 L95 28 L100 45 " +
@@ -19,13 +14,24 @@ const TEAR_PATH =
   "L44 77 L38 71 L32 78 L26 72 L20 78 L14 73 L9 77 L4 71 L1 62 Z";
 
 export function meta() {
-  return [{ title: "Dhanuja Portfolio" }];
+  return [
+    { title: "Dhanuja Narada Udurawana — Machine Learning Engineer" },
+    {
+      name: "description",
+      content:
+        "Machine Learning Engineer building deep learning, LLM, RAG, computer vision and NLP systems.",
+    },
+  ];
 }
 
-// Placeholder copy: replaced by Sanity content in the content phase.
-export default function Home() {
+export async function loader() {
+  return { projects: await getProjects() };
+}
+
+export default function Home({ loaderData }: Route.ComponentProps) {
   useScrollEngine();
   const activeIndex = useStore(scrollStore, (state) => state.activeIndex);
+  const { projects } = loaderData;
 
   return (
     <main className="pointer-events-none relative text-pearl">
@@ -35,7 +41,7 @@ export default function Home() {
         {(active) => (
           <>
             <p className="font-ui text-xs tracking-[0.08em] text-champagne">
-              Portfolio, placeholder
+              Machine Learning Engineer
             </p>
             <h1 className="mt-3 max-w-3xl font-display text-display font-medium text-ink">
               <SplitText text="Dhanuja" active={active} />
@@ -43,8 +49,8 @@ export default function Home() {
             <p
               className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
             >
-              Hero copy arrives from Sanity. The blade and its saya wait at the
-              centre of the frame.
+              First Class Honours BEng, Distinction dissertation in generative
+              audio AI, and 2+ years building software in industry.
             </p>
             <p
               className={`mt-10 font-ui text-xs tracking-[0.08em] text-ink/50 ${fade(active, "slow")}`}
@@ -55,9 +61,9 @@ export default function Home() {
         )}
       </Section>
 
-      {placeholderProjects.map((project, index) => (
+      {projects.map((project, index) => (
         <Section
-          id={project.id}
+          id={project.slug}
           key={project.id}
           index={index + 1}
           activeIndex={activeIndex}
@@ -77,52 +83,105 @@ export default function Home() {
               <p
                 className={`mt-3 font-ui text-xs text-ink/60 ${fade(active)}`}
               >
-                {project.meta}
+                {project.period}
               </p>
+              <div className="mt-6">
+                <CaseStudyCta
+                  slug={project.slug}
+                  sectionIndex={index + 1}
+                  title={project.title}
+                />
+              </div>
             </>
           )}
         </Section>
       ))}
 
-      <Section id="about" index={4} activeIndex={activeIndex} align="left">
+      <Section id="about" index={projects.length + 1} activeIndex={activeIndex} align="left">
         {(active) => (
           <>
             <p className="font-ui text-xs tracking-[0.08em] text-champagne">
               About
             </p>
             <h2 className="mt-2 font-display text-title text-ink">
-              <SplitText text="About section" active={active} />
+              <SplitText text="The long way here" active={active} />
             </h2>
             <p
               className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
             >
-              Timeline, skills, and portrait come from the about singleton in the
-              content phase.
+              Education, industry experience and six skill groups, all readable
+              without the sword.
             </p>
+            <Link
+              to="/about"
+              className={`mt-6 inline-block font-ui text-xs tracking-[0.06em] text-ink underline underline-offset-4 ${fade(active)}`}
+            >
+              Read the full about page
+            </Link>
           </>
         )}
       </Section>
 
-      <Section id="contact" index={5} activeIndex={activeIndex} align="right">
+      <Section
+        id="contact"
+        index={projects.length + 2}
+        activeIndex={activeIndex}
+        align="right"
+      >
         {(active) => (
           <>
             <p className="font-ui text-xs tracking-[0.08em] text-champagne">
               Contact
             </p>
             <h2 className="mt-2 font-display text-title text-ink">
-              <SplitText text="Contact" active={active} />
+              <SplitText text="Let's talk" active={active} />
             </h2>
-            <p
-              className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
+            <Link
+              to="/contact"
+              className={`mt-6 inline-block font-ui text-xs tracking-[0.06em] text-ink underline underline-offset-4 ${fade(active)}`}
             >
-              Links and email come from siteSettings later.
-            </p>
+              Email, LinkedIn and GitHub
+            </Link>
           </>
         )}
       </Section>
 
       <ProgressReadout />
     </main>
+  );
+}
+
+/** Last 15% of the project's own section reveals the case-study link. */
+function CaseStudyCta({
+  slug,
+  sectionIndex,
+  title,
+}: {
+  slug: string;
+  sectionIndex: number;
+  title: string;
+}) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      const { sections, activeIndex } = scrollStore.getState();
+      const local = sections[activeIndex]?.progress ?? 0;
+      setVisible(activeIndex === sectionIndex && local > 0.85);
+    }, 100);
+    return () => window.clearInterval(id);
+  }, [sectionIndex]);
+
+  return (
+    <Link
+      to={`/projects/${slug}`}
+      aria-label={`Read the ${title} case study`}
+      className={`inline-block border border-ink/30 px-4 py-2 font-ui text-xs tracking-[0.06em] text-ink transition-opacity duration-300 hover:border-ink ${
+        visible ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
+    >
+      Read the case study →
+    </Link>
   );
 }
 
@@ -189,11 +248,7 @@ function Section({
 function PaperSlash() {
   return (
     <span aria-hidden className="pointer-events-none absolute -inset-x-10 -inset-y-5 -z-10">
-      <svg
-        className="h-full w-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-      >
+      <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
         <path
           d={TEAR_PATH}
           transform="translate(1.4 1.8) rotate(-1.6 50 50)"
@@ -248,7 +303,6 @@ function PaperDefs() {
   );
 }
 
-/** 10 Hz read, never on the frame path. */
 function ProgressReadout() {
   const [progress, setProgress] = useState(0);
 
