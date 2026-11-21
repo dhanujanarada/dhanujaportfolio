@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import { getProject, getProjects } from "../cms/content";
+import { getProject, getProjects } from "../content/content";
 import { Page } from "../components/Page";
 import { RuneDivider } from "../components/RuneDivider";
 import { roman } from "../content/roman";
@@ -116,9 +116,20 @@ export default function ProjectDetail({ loaderData }: Route.ComponentProps) {
         )}
       </dl>
 
-      <figure className="border border-dashed border-champagne/20 bg-ink-soft/35 px-6 py-12 text-center font-ui text-xs text-pearl/40">
-        [TODO: project image]
-      </figure>
+      {project.cover ? (
+        <figure className="border border-champagne/20 p-2">
+          <img
+            src={project.cover.src}
+            alt={project.cover.alt}
+            className="max-h-[34rem] w-full object-cover"
+            loading="lazy"
+          />
+        </figure>
+      ) : (
+        <figure className="border border-dashed border-champagne/20 bg-ink-soft/35 px-6 py-12 text-center font-ui text-xs text-pearl/40">
+          [TODO: project image]
+        </figure>
+      )}
 
       {sections.map((section, index) => (
         <section key={section.section} className="relative">

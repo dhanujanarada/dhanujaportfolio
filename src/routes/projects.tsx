@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 import { Page } from "../components/Page";
 import { Parchment } from "../components/Parchment";
-import { getProjects } from "../cms/content";
+import { getProjects } from "../content/content";
 import { pageMeta } from "../content/meta";
 
 export function meta() {

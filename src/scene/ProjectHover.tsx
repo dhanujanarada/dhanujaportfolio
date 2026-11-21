@@ -12,7 +12,7 @@ import { useStore } from "zustand";
 import { scrollStore } from "../store/scroll";
 import { qualityStore } from "./quality";
 
-/** Placeholders until Sanity supplies `accent` and `cover`. */
+/** The shader plane does not read project data yet; accents mirror the projects. */
 const PROJECT_ACCENTS = ["#c9a86a", "#7f9ec4", "#a98a9e", "#8fae9b"];
 
 const VERTEX = /* glsl */ `

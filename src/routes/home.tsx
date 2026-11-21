@@ -7,7 +7,7 @@ import { useStore } from "zustand";
 import { Atmosphere } from "../components/Atmosphere";
 import { Parchment } from "../components/Parchment";
 import { SplitText } from "../components/SplitText";
-import { getContent } from "../cms/content";
+import { getContent } from "../content/content";
 import { pageMeta } from "../content/meta";
 import { roman } from "../content/roman";
 import { useScrollEngine } from "../motion/useScrollEngine";

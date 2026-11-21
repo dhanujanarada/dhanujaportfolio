@@ -27,7 +27,7 @@
   --color-leather: #5b4322;
   --color-ember: #c8863c;
 
-  /* Per-project accent arrives from Sanity; this is the neutral fallback. */
+  /* Per-project accent comes from the content files; this is the neutral fallback. */
   --color-accent: #c9a86a;
 
   --text-display: clamp(3.25rem, 7vw, 8.25rem);

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 
-import { getContent } from "../cms/content";
+import { getContent } from "../content/content";
 import { Page } from "../components/Page";
 import { SectionHeading } from "../components/SectionHeading";
 import { pageMeta } from "../content/meta";

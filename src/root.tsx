@@ -8,7 +8,7 @@ import {
 } from "react-router";
 
 import { App } from "./App";
-import { getContent } from "./cms/content";
+import { getContent } from "./content/content";
 
 import "./app.css";
 

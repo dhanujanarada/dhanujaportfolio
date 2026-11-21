@@ -1,130 +1,30 @@
 /**
  * CV content, transcribed from docs/content/cv-data.md.
  *
- * This is the fallback driver for the content layer: when Sanity env vars are
- * absent, routes read from here so the site still builds and prerenders. When
- * they are present, src/cms/content.ts reads Sanity instead. Nothing here may
+ * These files are the content source. Project case studies live in
+ * `src/content/projects/<slug>.ts`; everything else lives here. Nothing may
  * contain a claim the CV does not make; missing detail is a marked TODO.
  */
 
-export type CaseSection =
-  | "problem"
-  | "approach"
-  | "architecture"
-  | "results"
-  | "learned";
+import { projects } from "./projects";
+import type { Content } from "./types";
 
-export type CaseBlock = { section: CaseSection; body: string[] };
-
-export type ProjectAward = {
-  title: string;
-  event?: string;
-  note?: string;
-  year?: string;
-};
-
-export type Project = {
-  id: string;
-  title: string;
-  slug: string;
-  summary: string;
-  period: string;
-  projectType: string;
-  stack: string[];
-  repoUrl?: string;
-  awards: ProjectAward[];
-  accent: string;
-  order: number;
-  transitionPreset: "slash" | "thrust" | "sweep" | "spiral";
-  caseStudy: CaseBlock[];
-};
-
-export type Role = {
-  title: string;
-  start: string;
-  end: string;
-  bullets: string[];
-};
-
-export type Experience = { id: string; company: string; roles: Role[]; order: number };
-
-export type Education = {
-  id: string;
-  institution: string;
-  degree: string;
-  classification: string;
-  start: string;
-  end: string;
-  dissertationTitle: string;
-  dissertationNote?: string;
-  order: number;
-};
-
-export type SkillGroup = { id: string; group: string; items: string[]; order: number };
-
-export type Certification = {
-  id: string;
-  title: string;
-  issuer: string;
-  note?: string;
-  order: number;
-};
-
-export type Award = {
-  id: string;
-  title: string;
-  event?: string;
-  note?: string;
-  year?: string;
-  order: number;
-};
-
-export type Leadership = {
-  id: string;
-  role: string;
-  organization: string;
-  start: string;
-  end: string;
-  note?: string;
-  order: number;
-};
-
-export type About = {
-  headline: string;
-  summary: string;
-  location?: string;
-  bio?: string[];
-  portrait?: { url: string; alt: string };
-};
-
-export type SiteSettings = {
-  title: string;
-  description: string;
-  email: string;
-  linkedin?: string;
-  github?: string;
-  cvFile?: string;
-};
-
-export type Content = {
-  about: About;
-  settings: SiteSettings;
-  projects: Project[];
-  experience: Experience[];
-  education: Education[];
-  skills: SkillGroup[];
-  certifications: Certification[];
-  awards: Award[];
-  leadership: Leadership[];
-};
-
-const caseSections = (approach: string[]): CaseBlock[] => [
-  { section: "problem", body: ["[TODO: problem framing]"] },
-  { section: "approach", body: approach },
-  { section: "architecture", body: ["[TODO: architecture detail]"] },
-  { section: "results", body: ["[TODO: results / metrics]"] },
-  { section: "learned", body: ["[TODO: what I learned]"] },
-];
+export type {
+  About,
+  Award,
+  CaseBlock,
+  CaseSection,
+  Certification,
+  Content,
+  Education,
+  Experience,
+  Leadership,
+  Project,
+  ProjectAward,
+  Role,
+  SiteSettings,
+  SkillGroup,
+} from "./types";
 
 export const cvContent: Content = {
   about: {
@@ -142,100 +42,7 @@ export const cvContent: Content = {
     linkedin: "https://linkedin.com/in/dhanuja-narada",
     github: "https://github.com/dhanujanarada",
   },
-  projects: [
-    {
-      id: "project.vibeshift",
-      title: "VibeShift - Punk Genre Transfer with Flow Matching & DiT",
-      slug: "vibeshift",
-      summary: "[TODO: one-line project summary]",
-      period: "Apr 2025 - 2026",
-      projectType:
-        "Undergraduate Dissertation (Distinction); Cutting Edge 2026 Shortlist",
-      stack: ["Python", "PyTorch", "FastAPI", "SvelteKit"],
-      repoUrl: "https://github.com/dhanujanarada/VibeShift",
-      awards: [
-        {
-          title: "Cutting Edge 2026",
-          event: "Cutting Edge 2026",
-          note: "Shortlisted, Research Category, for VibeShift",
-          year: "2026",
-        },
-      ],
-      accent: "#c9a86a",
-      order: 1,
-      transitionPreset: "slash",
-      caseStudy: caseSections([
-        "Designed and trained a generative AI model for audio genre transfer using Flow Matching with a Diffusion Transformer (DiT), conditioned via FiLM and RoPE attention",
-        "Engineered an end-to-end audio pipeline: audio-to-MIDI transcription, FluidSynth synthesis, DAC encoding/decoding and chunked latent inference",
-        "Constructed a novel paired source-target DAC latent dataset for supervised genre-transfer training",
-        "Benchmarked against a retrained CycleGAN baseline across multiple audio quality metrics",
-        "Deployed inference behind a FastAPI REST API with a SvelteKit front end for real-time audio upload and playback",
-      ]),
-    },
-    {
-      id: "project.slidel",
-      title: "SLIDEL - Computer Vision Presentation Control",
-      slug: "slidel",
-      summary: "[TODO: one-line project summary]",
-      period: "Sep 2023 - Apr 2024",
-      projectType: "Team Project, IIT Sri Lanka; Codesprint 8.0",
-      stack: ["Python", "OpenCV", "MediaPipe", "Django", "Electron.js"],
-      repoUrl: "https://github.com/SlidelApp/slidel",
-      awards: [
-        {
-          title: "Codesprint 8.0",
-          event: "Codesprint 8.0",
-          note: "Developed SLIDEL",
-        },
-      ],
-      accent: "#7f9ec4",
-      order: 2,
-      transitionPreset: "thrust",
-      caseStudy: caseSections([
-        "Built a desktop app for hardware-free presentation control using real-time computer vision",
-        "Real-time hand gesture recognition with OpenCV and MediaPipe, training a custom deep learning model for hand pose detection",
-        "Laser pointer tracking and a keystone correction algorithm using Shi-Tomasi corner detection",
-        "Django REST APIs and an Electron.js desktop interface; Agile workflow and Jira bug tracking across the full lifecycle",
-      ]),
-    },
-    {
-      id: "project.silmarillion-rag",
-      title: "Silmarillion RAG - LLM Question Answering",
-      slug: "silmarillion-rag",
-      summary: "[TODO: one-line project summary]",
-      period: "May 2025 - Jun 2025",
-      projectType: "Personal Project",
-      stack: ["Python", "LangChain", "Gemini 2.0", "FAISS"],
-      repoUrl: "https://github.com/dhanujanarada/similarionRAG",
-      awards: [],
-      accent: "#a98a9e",
-      order: 3,
-      transitionPreset: "sweep",
-      caseStudy: caseSections([
-        "RAG pipeline with LangChain and Google Gemini 2.0 for contextual question answering over a PDF corpus",
-        "FAISS vector indexing with Maximal Marginal Relevance (MMR) search for relevant, non-redundant context",
-      ]),
-    },
-    {
-      id: "project.clustering-demand-forecasting",
-      title: "Clustering & Electricity Demand Forecasting",
-      slug: "clustering-demand-forecasting",
-      summary: "[TODO: one-line project summary]",
-      period: "2024",
-      projectType:
-        "Machine Learning Coursework, University of Westminster",
-      stack: ["Python", "R", "scikit-learn"],
-      repoUrl: "https://github.com/dhanujanarada/ML",
-      awards: [],
-      accent: "#8fae9b",
-      order: 4,
-      transitionPreset: "spiral",
-      caseStudy: caseSections([
-        "K-means clustering with PCA on a vehicle dataset; evaluated with silhouette analysis and cluster validity indices",
-        "Autoregressive (AR) and NARX MLP neural network models in R for electricity demand time-series forecasting, with hyperparameter tuning",
-      ]),
-    },
-  ],
+  projects,
   experience: [
     {
       id: "experience.hcl",

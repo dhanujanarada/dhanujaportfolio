@@ -193,9 +193,6 @@ importers:
       '@react-three/postprocessing':
         specifier: ^3.2.2
         version: 3.2.2(@react-three/fiber@9.8.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(three@0.187.0))(@types/three@0.187.0)(postprocessing@6.39.6(three@0.187.0))(react@19.3.1)(three@0.187.0)
-      '@sanity/client':
-        specifier: ^8.17.0
-        version: 8.17.0
       '@tanstack/react-query':
         specifier: ^5.108.2
         version: 5.108.2(@types/react@19.3.0)(react@19.3.1)
@@ -568,10 +565,6 @@ packages:
   '@rolldown/pluginutils@1.1.1':
     resolution: {integrity: sha512-glFIJDvLNDtJhT9qrMFWLPbvS+skxgt4L0K8Ei2YtnhPysAJnsI7nyxSJxKj4ADeKX0OLjC4ntRkwpLOoS3rwA==}
 
-  '@sanity/client@8.17.0':
-    resolution: {integrity: sha512-X7qnv2HdKPZUKlrLBRsjw+8yKqjCJd2i2V3cV1CRY5zq9k0wB1mhWpiwXiJhcRTBza8wdQtNSCdQCh8hBoZ71g==}
-    engines: {node: '>=22.12.0'}
-
   '@tailwindcss/node@4.3.5':
     resolution: {integrity: sha512-yT53FzV4ke0cr/BguDxhWMpm5MJu1O2muzk+tKw6lKHjODAsYArBbWwFbJiaksfzFv1tpkO9QHGzmfs1hJT66g==}
 
@@ -939,14 +932,6 @@ packages:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
     engines: {node: '>=6'}
 
-  eventsource-parser@4.1.3:
-    resolution: {integrity: sha512-jZVIVilXZfAx6H20ZKKEj5dabbpD9ETmMj3uHsjMmgBzBHB6tsHrmdWB4mAiy3amtN6MOoVkfXRQu4wf1n88Rw==}
-    engines: {node: '>=22.12'}
-
-  eventsource@5.1.5:
-    resolution: {integrity: sha512-Z41ZPzy7CM1NgAKgrG6pzPdOSimaly20ZY3+6opMQw/VEso+xhPWX4asJT2WAX8zPyFitV3C1+WJMWSLKSlAWg==}
-    engines: {node: '>=22.12.0'}
-
   exit-hook@5.1.0:
     resolution: {integrity: sha512-INjr2xyxHo7bhAqf5ong++GZPPnpcuBcaXUKt03yf7Fie9yWD7FapL4teOU0+awQazGs5ucBh7xWs/AD+6nhog==}
     engines: {node: '>=20'}
@@ -977,15 +962,6 @@ packages:
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
-
-  get-it@9.7.0:
-    resolution: {integrity: sha512-kUpzj2TuBNzPMddmW/FdTwuBl3DQRTfF3TPt/r/9C0XnulD+EDoGOkAhyvlh6hOKJdddxSYhnLWe5c0RQrQByw==}
-    engines: {node: '>=22.12.0'}
-    peerDependencies:
-      vitest: '>=2.0.0'
-    peerDependenciesMeta:
-      vitest:
-        optional: true
 
   glsl-noise@0.0.0:
     resolution: {integrity: sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==}
@@ -1169,10 +1145,6 @@ packages:
     resolution: {integrity: sha512-PfvofsGQ+MiOQIPkX9fU8ELUWmy5zL74CdQaph/ismKszfFkfwXaw0cGiwbwym2hT9k5+mdyl8O5WQ1MD8EHmA==}
     engines: {node: '>=18'}
 
-  obug@3.0.0:
-    resolution: {integrity: sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==}
-    engines: {node: '>=12.20.0'}
-
   p-map@7.1.1:
     resolution: {integrity: sha512-6Lh3jQPLthYujSrlw6ccWXBGZTkoTCz27Hd92g79LH/kjAbgoEu0t442cCCNbegPSJsA0lwDX8z0bcKtkpA32g==}
     engines: {node: '>=18'}
@@ -1259,9 +1231,6 @@ packages:
     resolution: {integrity: sha512-QIiV1J9d0pzN4jeeTH4sjPy0AZ6cAy2cG0ExeoE1+U8Rvj+hR3gYkokx0YbeUNGlZqiQJJ2utcETe0oKXwzsuA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
-
-  rxjs@7.8.2:
-    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
 
   scheduler@0.28.0:
     resolution: {integrity: sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==}
@@ -1355,10 +1324,6 @@ packages:
 
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
-
-  undici@7.30.2:
-    resolution: {integrity: sha512-mLyPQnHwUxaM/rideoK/+KL8DaAJLRl4aBCfmX444aCSLnIaomqPLtNRe2jdCYcsk5wZzXrDIQC8ZeYNRAYyIA==}
-    engines: {node: '>=20.18.1'}
 
   update-browserslist-db@1.4.0:
     resolution: {integrity: sha512-WPJuOnjI9FWDct4fB+ej4Mz8opLaw5CDcZ2t44tFZ0vIQVYWzBhWR3mkixuUj/A7+vY4V9+ApOZ2YYLwdgq46w==}
@@ -1799,15 +1764,6 @@ snapshots:
 
   '@rolldown/pluginutils@1.1.1': {}
 
-  '@sanity/client@8.17.0':
-    dependencies:
-      eventsource: 5.1.5
-      get-it: 9.7.0
-      obug: 3.0.0
-      rxjs: 7.8.2
-    transitivePeerDependencies:
-      - vitest
-
   '@tailwindcss/node@4.3.5':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -2075,12 +2031,6 @@ snapshots:
 
   escalade@3.2.0: {}
 
-  eventsource-parser@4.1.3: {}
-
-  eventsource@5.1.5:
-    dependencies:
-      eventsource-parser: 4.1.3
-
   exit-hook@5.1.0: {}
 
   exsolve@1.2.0: {}
@@ -2097,10 +2047,6 @@ snapshots:
     optional: true
 
   gensync@1.0.0-beta.2: {}
-
-  get-it@9.7.0:
-    dependencies:
-      undici: 7.30.2
 
   glsl-noise@0.0.0: {}
 
@@ -2224,8 +2170,6 @@ snapshots:
 
   node-releases@2.0.65: {}
 
-  obug@3.0.0: {}
-
   p-map@7.1.1: {}
 
   path-key@3.1.1: {}
@@ -2310,10 +2254,6 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.2.19
       '@rolldown/binding-win32-x64-msvc': 1.2.19
 
-  rxjs@7.8.2:
-    dependencies:
-      tslib: 2.9.1
-
   scheduler@0.28.0: {}
 
   semver@6.3.2: {}
@@ -2380,7 +2320,8 @@ snapshots:
 
   troika-worker-utils@0.52.0: {}
 
-  tslib@2.9.1: {}
+  tslib@2.9.1:
+    optional: true
 
   tunnel-rat@0.1.2(@types/react@19.3.0)(react@19.3.1):
     dependencies:
@@ -2414,8 +2355,6 @@ snapshots:
       '@typescript/typescript-win32-x64': 7.0.2
 
   undici-types@8.9.0: {}
-
-  undici@7.30.2: {}
 
   update-browserslist-db@1.4.0(browserslist@4.29.6):
     dependencies:
