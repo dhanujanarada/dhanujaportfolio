@@ -1,8 +1,10 @@
 import { Link } from "react-router";
 
 import { Page } from "../components/Page";
+import { Parchment } from "../components/Parchment";
 import { getProjects } from "../cms/content";
 import { pageMeta } from "../content/meta";
+import { roman } from "../content/roman";
 
 export function meta() {
   return pageMeta(
@@ -20,34 +22,66 @@ export default function Projects({
 }: {
   loaderData: Awaited<ReturnType<typeof loader>>;
 }) {
+  const { projects } = loaderData;
+
   return (
     <Page
       kicker="Projects"
       title="Selected work"
-      intro="Four projects from the CV. Case studies carry a marked placeholder wherever the source does not supply detail."
+      ghost="Works"
+      intro={`${projects.length} projects from the CV. Case studies carry a marked placeholder wherever the source does not supply detail.`}
     >
-      <ul className="grid gap-6 md:grid-cols-2">
-        {loaderData.projects.map((project) => (
-          <li key={project.id}>
+      <ul className="grid gap-8 md:grid-cols-2 md:gap-10">
+        {projects.map((project, index) => (
+          <li key={project.id} data-reveal>
             <Link
               to={`/projects/${project.slug}`}
-              className="group block h-full border border-pearl/12 bg-ink-soft p-6 transition-colors hover:border-champagne/60 focus-visible:border-champagne"
+              aria-label={`Read the ${project.title} case study`}
+              className="group block h-full"
             >
-              <p className="font-ui text-xs tracking-[0.06em] text-champagne">
-                {project.period}
-              </p>
-              <h2 className="mt-3 font-display text-2xl leading-tight text-pearl group-hover:text-champagne">
-                {project.title}
-              </h2>
-              <p className="mt-2 font-ui text-xs text-pearl/50">
-                {project.projectType}
-              </p>
-              <p className="mt-4 font-ui text-xs leading-relaxed text-pearl/65">
-                {project.stack.join(" · ")}
-              </p>
-              <span className="mt-6 inline-flex items-center gap-2 font-ui text-xs tracking-[0.06em] text-pearl/80">
-                Read the case study <span aria-hidden>→</span>
-              </span>
+              <Parchment
+                interactive
+                variant={index % 4}
+                tilt={index % 2 === 0 ? -0.6 : 0.55}
+                className="h-full"
+              >
+                <span
+                  aria-hidden
+                  className="absolute left-0 top-0 h-full w-[3px] opacity-80"
+                  style={{ backgroundColor: project.accent }}
+                />
+
+                <div className="flex items-baseline justify-between gap-4">
+                  <p className="font-display text-[0.68rem] uppercase tracking-[0.28em] text-leather">
+                    Project {roman(index + 1)}
+                  </p>
+                  <p className="font-ui text-[0.68rem] tracking-[0.04em] text-leather/90">
+                    {project.period}
+                  </p>
+                </div>
+
+                <h2 className="mt-4 font-display text-[clamp(1.5rem,2.6vw,2rem)] leading-[1.06] text-ink">
+                  {project.title}
+                </h2>
+                <p className="mt-3 font-ui text-[0.72rem] leading-relaxed text-leather">
+                  {project.projectType}
+                </p>
+                <p className="mt-4 font-ui text-[0.72rem] leading-relaxed text-ink/70">
+                  {project.stack.join(" · ")}
+                </p>
+
+                <div className="mt-7 flex items-center justify-between gap-4 border-t border-leather/20 pt-4">
+                  <span className="font-display text-[0.66rem] uppercase tracking-[0.2em] text-leather transition-colors group-hover:text-ink">
+                    Read the case study
+                  </span>
+                  <span
+                    aria-hidden
+                    className="text-lg text-leather transition-transform duration-500 group-hover:translate-x-1.5"
+                  >
+                    →
+                  </span>
+                </div>
+              </Parchment>
             </Link>
           </li>
         ))}

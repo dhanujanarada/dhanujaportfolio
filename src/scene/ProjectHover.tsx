@@ -136,7 +136,7 @@ export function ProjectHover() {
         )
       : null;
     if (title) {
-      const chars = title.querySelectorAll("span span");
+      const chars = title.querySelectorAll(".split-char");
       gsap.killTweensOf(chars);
       gsap.to(chars, {
         y: on ? -6 : 0,

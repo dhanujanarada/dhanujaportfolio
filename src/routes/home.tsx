@@ -1,19 +1,19 @@
-import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
 import { useStore } from "zustand";
 
+import { Atmosphere } from "../components/Atmosphere";
+import { Parchment } from "../components/Parchment";
+import { SplitText } from "../components/SplitText";
 import { getContent } from "../cms/content";
 import { pageMeta } from "../content/meta";
+import { roman } from "../content/roman";
 import { useScrollEngine } from "../motion/useScrollEngine";
 import { scrollStore } from "../store/scroll";
-import { strikeStore, type StrikePreset } from "../store/strike";
+import { strikeStore } from "../store/strike";
 import type { Route } from "./+types/home";
-
-const TEAR_PATH =
-  "M0 48 L3 35 L8 39 L13 30 L18 34 L24 26 L30 31 L36 24 L42 29 L48 22 " +
-  "L54 28 L60 21 L66 27 L72 23 L78 30 L84 26 L90 32 L95 28 L100 45 " +
-  "L97 60 L92 68 L86 63 L80 71 L74 66 L68 74 L62 68 L56 76 L50 70 " +
-  "L44 77 L38 71 L32 78 L26 72 L20 78 L14 73 L9 77 L4 71 L1 62 Z";
 
 export function meta() {
   return pageMeta(
@@ -32,33 +32,42 @@ export async function loader() {
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   useScrollEngine();
+  useGhostDrift();
+
   const activeIndex = useStore(scrollStore, (state) => state.activeIndex);
   const { projects, about } = loaderData;
 
+  const chapters = [
+    "Prologue",
+    ...projects.map((project) => project.title.split(" - ")[0]),
+    "Chronicle",
+    "Contact",
+  ];
+
   return (
     <main id="main" className="pointer-events-none relative text-pearl">
-      <PaperDefs />
+      <Atmosphere fixed />
+      <ChapterRail chapters={chapters} activeIndex={activeIndex} />
 
-      <Section id="hero" index={0} activeIndex={activeIndex} align="left">
+      <Section id="hero" index={0} activeIndex={activeIndex} align="left" ghost="I" placement="center">
         {(active) => (
-          <>
-            <p className="font-ui text-xs tracking-[0.08em] text-champagne">
+          <Parchment variant={0} tilt={-0.7} className="parchment--enter">
+            <p className="line-clamp-2 font-display text-[0.68rem] uppercase tracking-[0.18em] text-leather md:line-clamp-none">
               {about.headline}
             </p>
-            <h1 className="mt-3 max-w-3xl font-display text-display font-medium text-ink">
+            <h1 className="mt-5 max-w-3xl font-display text-[clamp(2.9rem,5.4vw,5.2rem)] font-medium leading-[0.95] text-ink">
               <SplitText text="Dhanuja" active={active} />
             </h1>
-            <p
-              className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
-            >
+            <p className="mt-5 line-clamp-6 max-w-lg font-body text-[1.15rem] leading-relaxed text-ink/75 md:line-clamp-none">
               {about.summary}
             </p>
-            <p
-              className={`mt-10 font-ui text-xs tracking-[0.08em] text-ink/50 ${fade(active, "slow")}`}
-            >
-              Keep scrolling
-            </p>
-          </>
+            <div className="mt-9 flex items-center gap-3 text-leather/90">
+              <span aria-hidden className="h-10 w-px bg-leather/35" />
+              <span className="font-display text-[0.68rem] uppercase tracking-[0.3em]">
+                Descend
+              </span>
+            </div>
+          </Parchment>
         )}
       </Section>
 
@@ -69,59 +78,37 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           index={index + 1}
           activeIndex={activeIndex}
           align={index % 2 === 0 ? "right" : "left"}
+          ghost={roman(index + 2)}
         >
           {(active) => (
-            <>
-              <p className="font-ui text-xs tracking-[0.08em] text-champagne">
-                Project {index + 1}
-              </p>
-              <h2
-                className="mt-2 font-display text-title text-ink"
-                data-hover-title
-              >
-                <SplitText text={project.title} active={active} />
-              </h2>
-              <p
-                className={`mt-3 font-ui text-xs text-ink/60 ${fade(active)}`}
-              >
-                {project.period}
-              </p>
-              <div className="mt-6">
-                <CaseStudyCta
-                  slug={project.slug}
-                  sectionIndex={index + 1}
-                  title={project.title}
-                  preset={project.transitionPreset}
-                />
-              </div>
-            </>
+            <ProjectCard
+              project={project}
+              index={index}
+              active={active}
+            />
           )}
         </Section>
       ))}
 
-      <Section id="about" index={projects.length + 1} activeIndex={activeIndex} align="left">
-        {(active) => (
-          <>
-            <p className="font-ui text-xs tracking-[0.08em] text-champagne">
-              About
-            </p>
-            <h2 className="mt-2 font-display text-title text-ink">
-              <SplitText text="The long way here" active={active} />
-            </h2>
-            <p
-              className={`mt-4 max-w-md font-body text-body text-ink/80 ${fade(active)}`}
-            >
-              Education, experience, credentials and contact, each on its own
-              page and readable without the sword.
-            </p>
-            <Link
-              to="/about"
-              className={`mt-6 inline-block font-ui text-xs tracking-[0.06em] text-ink underline underline-offset-4 ${fade(active)}`}
-            >
-              Read the full about page
-            </Link>
-          </>
-        )}
+      <Section
+        id="about"
+        index={projects.length + 1}
+        activeIndex={activeIndex}
+        align="left"
+        ghost={roman(projects.length + 3)}
+      >
+        {(active) =>
+          <ChronicleLink
+            to="/about"
+            kicker="The chronicle"
+            title="The long way here"
+            body="Education, industry experience, skills and credentials, gathered in one place and readable without the sword."
+            cta="Read the full chronicle"
+            active={active}
+            variant={2}
+            tilt={0.5}
+          />
+        }
       </Section>
 
       <Section
@@ -129,104 +116,148 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         index={projects.length + 2}
         activeIndex={activeIndex}
         align="right"
+        ghost={roman(projects.length + 4)}
       >
         {(active) => (
-          <>
-            <p className="font-ui text-xs tracking-[0.08em] text-champagne">
-              Contact
-            </p>
-            <h2 className="mt-2 font-display text-title text-ink">
-              <SplitText text="Let's talk" active={active} />
-            </h2>
-            <Link
-              to="/contact"
-              className={`mt-6 inline-block font-ui text-xs tracking-[0.06em] text-ink underline underline-offset-4 ${fade(active)}`}
-            >
-              Email, LinkedIn and GitHub
-            </Link>
-          </>
+          <ChronicleLink
+            to="/contact"
+            kicker="Send word"
+            title="Let's talk"
+            body="Email, LinkedIn and GitHub are one page away."
+            cta="Open contact"
+            active={active}
+            variant={3}
+            tilt={-0.45}
+          />
         )}
       </Section>
-
-      <ProgressReadout />
     </main>
   );
 }
 
-/** Last 15% of the project's own section reveals the case-study link. */
-function CaseStudyCta({
-  slug,
-  sectionIndex,
-  title,
-  preset,
+function ProjectCard({
+  project,
+  index,
+  active,
 }: {
-  slug: string;
-  sectionIndex: number;
-  title: string;
-  preset: StrikePreset;
+  project: Awaited<ReturnType<typeof loader>>["projects"][number];
+  index: number;
+  active: boolean;
 }) {
-  const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      const { sections, activeIndex } = scrollStore.getState();
-      const local = sections[activeIndex]?.progress ?? 0;
-      setVisible(activeIndex === sectionIndex && local > 0.85);
-    }, 100);
-    return () => window.clearInterval(id);
-  }, [sectionIndex]);
-
   function onClick(event: MouseEvent<HTMLAnchorElement>) {
-    // Keyboard activation and reduced motion take the plain link.
+    // Modified clicks and keyboard activation keep the plain link.
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     if (event.detail === 0) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     event.preventDefault();
-    strikeStore.getState().fire(preset);
-    window.setTimeout(() => navigate(`/projects/${slug}`), 450);
+    strikeStore.getState().fire(project.transitionPreset);
+    window.setTimeout(() => navigate(`/projects/${project.slug}`), 420);
   }
-
-  if (!visible) return null;
 
   return (
     <Link
-      to={`/projects/${slug}`}
+      to={`/projects/${project.slug}`}
       onClick={onClick}
-      aria-label={`Read the ${title} case study`}
-      className="inline-block border border-ink/30 px-4 py-2 font-ui text-xs tracking-[0.06em] text-ink transition-opacity duration-300 hover:border-ink"
+      aria-label={`Read the ${project.title} case study`}
+      className="group block w-full"
     >
-      Read the case study →
+      <Parchment
+        interactive
+        variant={index % 4}
+        tilt={index % 2 === 0 ? -0.6 : 0.55}
+      >
+        <span
+          aria-hidden
+          className="absolute left-0 top-0 h-full w-[3px] opacity-80"
+          style={{ backgroundColor: project.accent }}
+        />
+        <div className="flex items-baseline justify-between gap-4">
+          <p className="font-display text-[0.68rem] uppercase tracking-[0.28em] text-leather">
+            Project {roman(index + 2)}
+          </p>
+          <p className="font-ui text-[0.68rem] tracking-[0.04em] text-leather/90">
+            {project.period}
+          </p>
+        </div>
+
+        <h2
+          className="mt-4 font-display text-[clamp(1.85rem,3.1vw,2.9rem)] leading-[1.03] text-ink"
+          data-hover-title
+        >
+          <SplitText text={project.title} active={active} />
+        </h2>
+
+        <p className="mt-3 font-ui text-[0.72rem] leading-relaxed text-leather">
+          {project.projectType}
+        </p>
+        <p className="mt-4 font-ui text-[0.72rem] leading-relaxed text-ink/70">
+          {project.stack.join(" · ")}
+        </p>
+
+        <div className="mt-7 flex items-center justify-between gap-4 border-t border-leather/20 pt-4">
+          <span className="font-display text-[0.68rem] uppercase tracking-[0.22em] text-leather transition-colors group-hover:text-ink">
+            Read the case study
+          </span>
+          <span
+            aria-hidden
+            className="text-lg text-leather transition-transform duration-500 group-hover:translate-x-1.5"
+          >
+            →
+          </span>
+        </div>
+      </Parchment>
     </Link>
   );
 }
 
-function SplitText({ text, active }: { text: string; active: boolean }) {
+function ChronicleLink({
+  to,
+  kicker,
+  title,
+  body,
+  cta,
+  active,
+  variant,
+  tilt,
+}: {
+  to: string;
+  kicker: string;
+  title: string;
+  body: string;
+  cta: string;
+  active: boolean;
+  variant: number;
+  tilt: number;
+}) {
   return (
-    <span aria-label={text}>
-      {Array.from(text).map((character, index) => (
-        <span
-          key={`${character}-${index}`}
-          aria-hidden
-          className={`inline-block transition-[opacity,filter] duration-500 ease-out ${
-            active ? "opacity-100 blur-0" : "opacity-0 blur-[3px]"
-          }`}
-          style={{ transitionDelay: active ? `${index * 18}ms` : "0ms" }}
-        >
-          {character === " " ? "\u00A0" : character}
-        </span>
-      ))}
-    </span>
+    <Link to={to} className="group block w-full">
+      <Parchment interactive variant={variant} tilt={tilt}>
+        <p className="font-display text-[0.68rem] uppercase tracking-[0.28em] text-leather">
+          {kicker}
+        </p>
+        <h2 className="mt-4 font-display text-[clamp(1.9rem,3.1vw,2.9rem)] leading-[1.03] text-ink">
+          <SplitText text={title} active={active} />
+        </h2>
+        <p className="mt-4 max-w-md font-body text-[1.05rem] leading-relaxed text-ink/75">
+          {body}
+        </p>
+        <div className="mt-7 flex items-center justify-between gap-4 border-t border-leather/20 pt-4">
+          <span className="font-display text-[0.68rem] uppercase tracking-[0.22em] text-leather transition-colors group-hover:text-ink">
+            {cta}
+          </span>
+          <span
+            aria-hidden
+            className="text-lg text-leather transition-transform duration-500 group-hover:translate-x-1.5"
+          >
+            →
+          </span>
+        </div>
+      </Parchment>
+    </Link>
   );
-}
-
-const FADE = {
-  fast: "transition-opacity duration-500",
-  slow: "transition-opacity duration-700",
-} as const;
-
-function fade(active: boolean, speed: keyof typeof FADE = "fast") {
-  return `${FADE[speed]} ${active ? "opacity-100" : "opacity-0"}`;
 }
 
 function Section({
@@ -234,12 +265,16 @@ function Section({
   index,
   activeIndex,
   align,
+  ghost,
+  placement = "end",
   children,
 }: {
   id: string;
   index: number;
   activeIndex: number;
   align: "left" | "right";
+  ghost: string;
+  placement?: "end" | "center";
   children: (active: boolean) => ReactNode;
 }) {
   const active = index === activeIndex;
@@ -247,100 +282,113 @@ function Section({
   return (
     <section
       data-section={id}
-      className="pointer-events-none relative flex h-svh items-end px-6 pb-14 md:px-16 md:pb-20"
+      className={`pointer-events-none relative flex min-h-svh overflow-hidden px-6 pb-16 pt-28 md:px-16 md:pb-24 ${
+        placement === "center" ? "items-center" : "items-end"
+      }`}
     >
+      <span
+        aria-hidden
+        data-ghost
+        className={`ghost-type top-[8%] ${
+          align === "right"
+            ? "left-[2vw] text-left"
+            : "right-[2vw] text-right"
+        }`}
+      >
+        {ghost}
+      </span>
+
       <div
-        className={`pointer-events-auto relative max-w-xl ${
+        className={`pointer-events-auto relative z-10 w-full max-w-[34rem] ${
           align === "right" ? "ml-auto" : ""
         }`}
       >
-        <PaperSlash />
-        <div className="relative px-8 py-7 md:px-10">{children(active)}</div>
+        {children(active)}
       </div>
     </section>
   );
 }
 
-function PaperSlash() {
-  return (
-    <span aria-hidden className="pointer-events-none absolute -inset-x-10 -inset-y-5 -z-10">
-      <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <path
-          d={TEAR_PATH}
-          transform="translate(1.4 1.8) rotate(-1.6 50 50)"
-          fill="#000000"
-          opacity="0.5"
-          filter="url(#tear-void)"
-        />
-        <path
-          d={TEAR_PATH}
-          transform="rotate(-1.6 50 50)"
-          fill="url(#paper-fill)"
-          stroke="var(--color-pearl)"
-          strokeOpacity="0.35"
-          strokeWidth="0.35"
-          filter="url(#tear-noise)"
-        />
-      </svg>
-    </span>
-  );
-}
-
-function PaperDefs() {
-  return (
-    <svg aria-hidden className="pointer-events-none absolute h-0 w-0">
-      <defs>
-        <linearGradient id="paper-fill" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" style={{ stopColor: "var(--color-pearl)" }} />
-          <stop offset="0.55" style={{ stopColor: "var(--color-pearl-deep)" }} />
-          <stop offset="1" style={{ stopColor: "var(--color-pearl)" }} />
-        </linearGradient>
-        <filter id="tear-noise" x="-12%" y="-12%" width="124%" height="124%">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.05 0.11"
-            numOctaves="4"
-            seed="7"
-            result="noise"
-          />
-          <feDisplacementMap
-            in="SourceGraphic"
-            in2="noise"
-            scale="5"
-            xChannelSelector="R"
-            yChannelSelector="G"
-          />
-        </filter>
-        <filter id="tear-void" x="-15%" y="-15%" width="130%" height="130%">
-          <feGaussianBlur stdDeviation="1.6" />
-        </filter>
-      </defs>
-    </svg>
-  );
-}
-
-function ProgressReadout() {
-  const [progress, setProgress] = useState(0);
+function ChapterRail({
+  chapters,
+  activeIndex,
+}: {
+  chapters: string[];
+  activeIndex: number;
+}) {
+  const fill = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const id = window.setInterval(
-      () => setProgress(scrollStore.getState().global),
-      100,
-    );
-    return () => window.clearInterval(id);
+    const node = fill.current;
+    if (!node) return;
+    const update = () => {
+      node.style.transform = `scaleY(${scrollStore.getState().global})`;
+    };
+    update();
+    return scrollStore.subscribe(update);
   }, []);
 
   return (
-    <div className="pointer-events-none fixed bottom-6 right-6 z-40 text-right">
-      <div className="font-ui text-xs tabular-nums text-pearl/70">
-        {Math.round(progress * 100)}%
+    <aside
+      aria-hidden
+      className="pointer-events-none fixed left-5 top-1/2 z-30 hidden -translate-y-1/2 md:block"
+    >
+      <div className="flex flex-col items-center gap-5">
+        <span className="relative h-28 w-px bg-pearl/15">
+          <span
+            ref={fill}
+            className="absolute inset-0 origin-top bg-champagne"
+          />
+        </span>
+        <ol className="flex flex-col items-center gap-3">
+          {chapters.map((chapter, index) => (
+            <li
+              key={`${chapter}-${index}`}
+              title={chapter}
+              className={`font-display text-[0.62rem] tracking-[0.18em] transition-colors duration-500 ${
+                index === activeIndex ? "text-champagne" : "text-pearl/25"
+              }`}
+            >
+              {roman(index + 1)}
+            </li>
+          ))}
+        </ol>
       </div>
-      <div className="mt-2 h-px w-16 bg-pearl/15">
-        <div
-          className="h-px bg-champagne"
-          style={{ width: `${progress * 100}%` }}
-        />
-      </div>
-    </div>
+    </aside>
   );
+}
+
+function useGhostDrift() {
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const tweens = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-ghost]"),
+    ).map((ghost) => {
+      const section = ghost.closest<HTMLElement>("[data-section]");
+      return gsap.fromTo(
+        ghost,
+        { yPercent: 7 },
+        {
+          yPercent: -18,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section ?? ghost,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.1,
+          },
+        },
+      );
+    });
+
+    return () => {
+      for (const tween of tweens) {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      }
+    };
+  }, []);
 }
