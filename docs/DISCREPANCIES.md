@@ -31,12 +31,20 @@ particles need the scene depth buffer, which the postprocessing composer does no
 expose to a custom material. This is a deliberate substitution, not a completed
 soft-particle implementation.
 
-## 2026-11-21 — frame time and visuals are unverified
+## 2026-11-21 — frame time and visuals on real GPUs are unverified
 
-No browser exists in this environment. `QualityMonitor` measures a 1.5 s frame
-sample after a 0.5 s warm-up and the overlay prints it, but no tier has been
-measured on real hardware. Every visual claim is code-level only; the katana draw,
-smoke, parchment edges, text fit, kinetic reveals and fog still need a human look.
+Headless Chromium (SwiftShader) now confirms the layout, the lazy scene, the katana,
+the parchment, the smoke and the low-tier static path. Real-device frame time is still
+unmeasured: software WebGL renders at a few frames per second and cannot stand in for
+a GPU. Run the dev overlay (press `d`) on the target laptop and phone to read the tier
+and frame time.
+
+## 2026-11-21 — no image-based lighting on the blade
+
+The remote HDR environment was removed for load time. The blade uses direct lights and
+a standard material, so its reflections are simpler than a full studio HDRI. If the
+steel needs more depth later, use a local, compressed environment map rather than a
+runtime CDN fetch; see decision 0008.
 
 ## 2026-11-21 — the shader cover stays home-only
 
@@ -81,6 +89,14 @@ hero summary, project titles, periods, awards, skills, education and leadership.
 that exist only to run the interface — “Descend”, “The long way here”, “Let's talk”,
 nav text and button text — remain in JSX. They are not CV claims, and decision 0006
 records why the visual language keeps them there.
+
+## 2026-11-21 — the 3D load path rebuilt
+
+The remote HDR, the synchronous three/drei bundle and the startup postprocessing were
+the load cost, not the katana (201 kB, no textures). The scene is now a lazy chunk,
+the HDR is gone, the sword uses one standard material program, the model is preloaded,
+phones start at low, and effects load only after the tier settles. Decision 0008
+records the budget and the measurements.
 
 ## 2026-11-21 — fixed in the review pass
 
