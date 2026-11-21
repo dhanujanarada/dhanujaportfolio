@@ -1,10 +1,11 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { Link } from "react-router";
+import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
+import { Link, useNavigate } from "react-router";
 import { useStore } from "zustand";
 
 import { getProjects } from "../cms/content";
 import { useScrollEngine } from "../motion/useScrollEngine";
 import { scrollStore } from "../store/scroll";
+import { strikeStore, type StrikePreset } from "../store/strike";
 import type { Route } from "./+types/home";
 
 const TEAR_PATH =
@@ -90,6 +91,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   slug={project.slug}
                   sectionIndex={index + 1}
                   title={project.title}
+                  preset={project.transitionPreset}
                 />
               </div>
             </>
@@ -156,12 +158,15 @@ function CaseStudyCta({
   slug,
   sectionIndex,
   title,
+  preset,
 }: {
   slug: string;
   sectionIndex: number;
   title: string;
+  preset: StrikePreset;
 }) {
   const [visible, setVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -172,9 +177,20 @@ function CaseStudyCta({
     return () => window.clearInterval(id);
   }, [sectionIndex]);
 
+  function onClick(event: MouseEvent<HTMLAnchorElement>) {
+    // Keyboard activation and reduced motion take the plain link.
+    if (event.detail === 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    event.preventDefault();
+    strikeStore.getState().fire(preset);
+    window.setTimeout(() => navigate(`/projects/${slug}`), 450);
+  }
+
   return (
     <Link
       to={`/projects/${slug}`}
+      onClick={onClick}
       aria-label={`Read the ${title} case study`}
       className={`inline-block border border-ink/30 px-4 py-2 font-ui text-xs tracking-[0.06em] text-ink transition-opacity duration-300 hover:border-ink ${
         visible ? "opacity-100" : "pointer-events-none opacity-0"

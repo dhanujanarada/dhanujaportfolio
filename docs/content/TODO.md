@@ -40,7 +40,5 @@ the line here.
 
 ## Motion gaps (code, not content)
 
-- [ ] **Preset strike before navigation** — the “Read the case study” link navigates with
-  the route wipe, but the project's `transitionPreset` strike is not played yet.
 - [ ] **`/projects` index hover** — cards are DOM; the shader plane hover exists only on
   the home journey where sections are aligned with the canvas.

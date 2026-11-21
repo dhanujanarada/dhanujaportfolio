@@ -52,11 +52,16 @@ No Sanity project ID or token exists, so `src/cms/content.ts` falls back to
 prerenders from the CV file. Decision 0005 records this; it must be closed by setting
 the env vars and running the seed before deploy.
 
-## 2026-11-21 — preset strike and index hover are not wired
+## 2026-11-21 — index hover is not wired
 
-“Read the case study” navigates with the shared route wipe, but the project's
-`transitionPreset` strike does not play first. `/projects` renders DOM cards; the shader
-cover plane exists only on the home journey. Both are listed in `docs/content/TODO.md`.
+“Read the case study” now fires the project's `transitionPreset` strike and navigates at
+its midpoint; keyboard activation and reduced motion use the plain link. `/projects`
+still renders DOM cards — the shader cover plane exists only on the home journey.
+
+## 2026-11-21 — seed script exists but has never run
+
+`scripts/seed.ts` is idempotent and writes fixed IDs, but there is no project ID or write
+token, so it cannot be verified. The CV driver remains the build-time source.
 
 ## 2026-11-21 — sitemap and robots need SITE_URL
 

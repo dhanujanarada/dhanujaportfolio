@@ -16,6 +16,7 @@ export default defineType({
       of: [
         defineArrayMember({
           type: "object",
+          name: "role",
           fields: [
             defineField({
               name: "title",

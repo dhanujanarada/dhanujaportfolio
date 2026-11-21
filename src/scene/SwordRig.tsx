@@ -4,6 +4,7 @@ import type { Group, Object3D } from "three";
 import { useStore } from "zustand";
 
 import { scrollStore } from "../store/scroll";
+import { strikeStore } from "../store/strike";
 import { qualityStore } from "./quality";
 import { Sparks } from "./Sparks";
 import { Sword, drawProgress } from "./Sword";
@@ -33,7 +34,15 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
     }, 1000 / 30);
 
     return () => window.clearInterval(id);
-  }, [tier, invalidate]);
+  }, [tier, ambient, invalidate]);
+
+  useEffect(
+    () =>
+      strikeStore.subscribe((state) => {
+        if (state.preset) invalidate();
+      }),
+    [invalidate],
+  );
 
   useEffect(() => {
     const query = window.matchMedia(REDUCED_MOTION_QUERY);
@@ -77,6 +86,21 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
         : Math.sin((time * Math.PI * 2) / IDLE_PERIOD) * 0.03);
 
     object.position.z = storm * 1.5;
+
+    const strike = strikeStore.getState();
+    if (strike.preset) {
+      const elapsed = performance.now() - strike.startedAt;
+      const progress = Math.min(1, elapsed / 900);
+      if (progress >= 1) {
+        strike.clear();
+      } else {
+        const kick = Math.sin(progress * Math.PI);
+        object.rotation.z += kick * 0.45;
+        object.position.z += kick * 0.9;
+        object.scale.setScalar(SCALE + storm * 0.1 + kick * 0.06);
+        invalidate();
+      }
+    }
 
     if (!reducedMotion.current && tier === "high") invalidate();
   });

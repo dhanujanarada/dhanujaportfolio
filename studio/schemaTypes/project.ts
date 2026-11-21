@@ -119,6 +119,7 @@ export default defineType({
       of: [
         defineArrayMember({
           type: "object",
+          name: "caseStudySection",
           fields: [
             defineField({
               name: "section",
