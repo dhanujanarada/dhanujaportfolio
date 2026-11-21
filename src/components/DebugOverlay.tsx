@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { qualityStore, setQuality, type QualityTier } from "../scene/quality";
 import { scrollStore } from "../store/scroll";
 
 type Snapshot = {
@@ -10,9 +11,17 @@ type Snapshot = {
   count: number;
   fps: number;
   dpr: number;
+  tier: string;
+  frameMs: number;
 };
 
 const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+const NEXT_TIER: Record<QualityTier, QualityTier> = {
+  high: "medium",
+  medium: "low",
+  low: "high",
+};
 
 export function DebugOverlay() {
   const [visible, setVisible] = useState(false);
@@ -22,9 +31,18 @@ export function DebugOverlay() {
     if (!import.meta.env.DEV) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== "d") return;
       if (event.metaKey || event.ctrlKey || event.altKey) return;
-      setVisible((current) => !current);
+      const key = event.key.toLowerCase();
+
+      if (key === "d") {
+        setVisible((current) => !current);
+        return;
+      }
+
+      if (key === "t") {
+        const quality = qualityStore.getState();
+        setQuality(NEXT_TIER[quality.tier], quality.frameMs);
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -57,6 +75,7 @@ export function DebugOverlay() {
     const read = () => {
       const { global, activeIndex, sections } = scrollStore.getState();
       const active = sections[activeIndex];
+      const quality = qualityStore.getState();
       setSnapshot({
         global,
         activeIndex,
@@ -65,6 +84,8 @@ export function DebugOverlay() {
         count: sections.length,
         fps,
         dpr: window.devicePixelRatio,
+        tier: quality.tier,
+        frameMs: quality.frameMs,
       });
     };
 
@@ -89,6 +110,10 @@ export function DebugOverlay() {
       <div>
         {snapshot.fps} fps · dpr {snapshot.dpr}
       </div>
+      <div>
+        tier {snapshot.tier} · {snapshot.frameMs.toFixed(1)} ms avg
+      </div>
+      <div className="text-white/40">d overlay · t cycle tier</div>
     </div>
   );
 }
