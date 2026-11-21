@@ -1,4 +1,21 @@
-import type { SchemaTypeDefinition } from "sanity";
+import about from "./about";
+import award from "./award";
+import certification from "./certification";
+import education from "./education";
+import experience from "./experience";
+import leadership from "./leadership";
+import project from "./project";
+import siteSettings from "./siteSettings";
+import skillGroup from "./skillGroup";
 
-// Populated in the content phase. Schema changes live here (AGENTS.md rule 7).
-export const schemaTypes: SchemaTypeDefinition[] = [];
+export const schemaTypes = [
+  project,
+  award,
+  certification,
+  education,
+  experience,
+  leadership,
+  skillGroup,
+  about,
+  siteSettings,
+];
