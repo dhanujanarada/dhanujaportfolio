@@ -4,7 +4,6 @@ export type StrikePreset = "slash" | "thrust" | "sweep" | "spiral";
 
 type StrikeState = {
   preset: StrikePreset | null;
-  startedAt: number;
   fire: (preset: StrikePreset) => void;
   clear: () => void;
 };
@@ -15,11 +14,6 @@ type StrikeState = {
  */
 export const strikeStore = createStore<StrikeState>()((set) => ({
   preset: null,
-  startedAt: 0,
-  fire: (preset) =>
-    set({
-      preset,
-      startedAt: typeof performance !== "undefined" ? performance.now() : Date.now(),
-    }),
-  clear: () => set({ preset: null, startedAt: 0 }),
+  fire: (preset) => set({ preset }),
+  clear: () => set({ preset: null }),
 }));

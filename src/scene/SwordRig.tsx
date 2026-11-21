@@ -45,7 +45,10 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
         invalidate();
         gsap.killTweensOf(kick.current);
         gsap
-          .timeline({ onUpdate: invalidate })
+          .timeline({
+            onUpdate: invalidate,
+            onComplete: () => strikeStore.getState().clear(),
+          })
           .to(kick.current, { value: 1, duration: 0.32, ease: "power3.out" })
           .to(kick.current, { value: 0, duration: 0.5, ease: "power2.in" });
       }),
