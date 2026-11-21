@@ -53,7 +53,7 @@ automatic deploys on push.
 
 - Prerendered routes exist as `<route>/index.html`; Vercel serves them directly.
 - Unknown paths are rewritten to `__spa-fallback.html`, which hydrates the React 404
-  page. It carries `X-Robots-Tag: noindex`.
+  page.
 - This is a soft 404: the response status is 200. A true 404 status would need a static
   `404.html` or a function, and would lose the React 404 page.
 

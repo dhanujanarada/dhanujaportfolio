@@ -38,15 +38,6 @@
       ]
     },
     {
-      "source": "/__spa-fallback.html",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex"
-        }
-      ]
-    },
-    {
       "source": "/(.*)",
       "headers": [
         {

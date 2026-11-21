@@ -54,7 +54,7 @@ Prerendered HTML, per-page titles and JSON-LD are present regardless.
 
 Vercel serves `__spa-fallback.html` for unmatched paths, so the React 404 page renders
 with HTTP 200. A real 404 status would need a static `404.html` or a function; neither is
-worth it for this portfolio. The fallback is marked `X-Robots-Tag: noindex`.
+worth it for this portfolio.
 
 ## 2026-11-21 — the 404 wildcard is not prerendered
 
