@@ -58,7 +58,7 @@ function QualityMonitor() {
 
     // A shader compile or a background tab produces a huge delta. It is not
     // steady-state render cost. Repeated stalls, however, mean the device cannot
-    // hold the current tier, so settle to low rather than sampling forever.
+    // hold the current tier, so settle to medium rather than sampling forever.
     if (delta > 0.2) {
       stalls.current += 1;
       warmup.current = 0;
@@ -67,7 +67,7 @@ function QualityMonitor() {
 
       if (stalls.current >= 8) {
         done.current = true;
-        window.setTimeout(() => setQuality("low", delta * 1000), 0);
+        window.setTimeout(() => setQuality("medium", delta * 1000), 0);
       }
       return;
     }
@@ -84,7 +84,10 @@ function QualityMonitor() {
     if (total.current < 1.5) return;
 
     const frameMs = (total.current / frames.current) * 1000;
-    const tier = frameMs > 24 ? "low" : frameMs > 19 ? "medium" : "high";
+    // Medium is the floor for a sampled session: the smoke, halo, sparks and
+    // hover plane are the scene. Low stays for reduced motion and coarse
+    // pointers, which never reach this sample.
+    const tier = frameMs > 19 ? "medium" : "high";
     done.current = true;
     // Leave the frame callback before touching React-visible state (rule 2).
     window.setTimeout(() => setQuality(tier, frameMs), 0);
