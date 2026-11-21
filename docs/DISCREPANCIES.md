@@ -3,33 +3,26 @@
 Temporary gaps between the documented plan and the code. Remove an entry when it
 is closed; record lasting decisions in `decisions/` instead.
 
-## 2026-11-21 — `/project/:slug` is not prerendered
+## 2026-11-21 — `/project/:slug` redirects but is not prerendered
 
-`react-router.config.ts` prerenders only `/`. React Router can prerender concrete
-URLs, not dynamic patterns, so `/project/<slug>` currently falls through to the SPA
-fallback (`build/client/__spa-fallback.html`) and hydrates client-side. The slug
-list will be enumerated from Sanity once content exists; see decision 0001.
+`react-router.config.ts` prerenders concrete URLs only. The legacy route uses a
+`clientLoader` that 301-redirects to `/projects/:slug`, so it is deliberately not an
+HTML page and falls through to the SPA fallback. There is no SEO value in prerendering
+a redirect.
 
-## 2026-11-21 — placeholder copy and a draft content spec
+## 2026-11-21 — shader hover uses procedural covers
 
-`src/routes/home.tsx` (six sections) and `src/routes/project.tsx` contain
-hard-coded placeholder text. Rule 6 (all copy from Sanity) applies from the
-content phase onward. `docs/specs/content-model.md` is still unapproved and
-unimplemented.
+`ProjectHover` paints its own cover (`makeCover`) and keeps a parallel accent list.
+Project `accent` values exist in the content driver, but the scene does not read them;
+a fifth project would fall back to the first accent. Proposal 3 in the architecture
+pass would feed the scene from project data.
 
-## 2026-11-21 — hover cover and accent are procedural
+## 2026-11-21 — the hover plane is supplementary
 
-`ProjectHover` paints its own cover (`makeCover`) and uses three hard-coded
-accents. Sanity's `cover`, `accent`, and project order have not been wired, so
-the hover does not yet reflect real projects.
-
-## 2026-11-21 — hover has no affordance, and low tier removes it
-
-The cover plane lives in the empty corner opposite the paper and is discoverable
-only by moving the cursor there. There is no label or cursor change until the
-pointer is already over it. On the low quality tier the plane is not rendered at
-all, with no CSS fallback — so a slow device loses the feature rather than
-getting a cheaper version.
+The corner shader plane is discoverable only by moving the cursor into it, and the low
+tier removes it. It is now optional decoration: every project slab is itself a link, so
+the same destination is reachable by clicking the paper, the keyboard or the projects
+index.
 
 ## 2026-11-21 — smoke is distance-faded, not depth-faded
 
@@ -42,8 +35,8 @@ soft-particle implementation.
 
 No browser exists in this environment. `QualityMonitor` measures a 1.5 s frame
 sample after a 0.5 s warm-up and the overlay prints it, but no tier has been
-measured on real hardware. Every visual claim in this phase is code-level only;
-the katana draw, paper tear, smoke, hover and wisp still need a human look.
+measured on real hardware. Every visual claim is code-level only; the katana draw,
+smoke, parchment edges, text fit, kinetic reveals and fog still need a human look.
 
 ## 2026-11-21 — routes read the CV file, not Sanity
 
@@ -52,11 +45,11 @@ No Sanity project ID or token exists, so `src/cms/content.ts` falls back to
 prerenders from the CV file. Decision 0005 records this; it must be closed by setting
 the env vars and running the seed before deploy.
 
-## 2026-11-21 — index hover is not wired
+## 2026-11-21 — the shader cover stays home-only
 
-“Read the case study” now fires the project's `transitionPreset` strike and navigates at
-its midpoint; keyboard activation and reduced motion use the plain link. `/projects`
-still renders DOM cards — the shader cover plane exists only on the home journey.
+`/projects` renders parchment cards with no shader plane; the plane exists only on the
+home journey where sections align with the canvas. Both routes use the same content and
+the same card affordance.
 
 ## 2026-11-21 — seed script exists but has never run
 
@@ -88,12 +81,12 @@ three files. Deliberately deferred to the architecture pass rather than half-fix
 
 ## 2026-11-21 — interface labels stay in code
 
-Route copy that comes from the CV now flows through the content driver: the hero
-headline, the hero summary, project titles, periods, awards, skills, education and
-leadership. Labels that exist only to run the interface — “Keep scrolling”, “The long
-way here”, “Let's talk”, nav and button text — remain in JSX. They are not CV claims and
-adding singleton fields for each would bloat the schema. If the owner wants them
-editable, they become `siteSettings` fields and the seed grows with them.
+Route copy that comes from the CV flows through the content driver: the hero headline,
+hero summary, project titles, periods, awards, skills, education and leadership. Labels
+that exist only to run the interface — “Descend”, “The long way here”, “Let's talk”,
+nav text and button text — remain in JSX. They are not CV claims and adding singleton
+fields for each would bloat the schema. Decision 0006 records the visual language; if
+the owner wants these labels editable, they become `siteSettings` fields.
 
 ## 2026-11-21 — fixed in the review pass
 

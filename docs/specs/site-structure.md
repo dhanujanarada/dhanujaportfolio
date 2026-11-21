@@ -50,11 +50,12 @@ Footer repeats nav, email, LinkedIn, GitHub, CV, and the copyright year.
 
 - Sections: hero, four project beats, about teaser, contact beat. Copy alternates sides
   around the diagonal katana; the paper slab stays.
-- Each project beat's **last 15% of local progress** reveals “Read the case study”.
+- Each project beat is one link to its case study: the whole parchment slab is
+  clickable, and “Read the case study” stays visible at its foot.
 - Home is the only route with the full sword journey. Every other route runs the
   **ambient mode**: idle sword, low smoke, no scroll choreography, no strike.
-- Activating the CTA plays that project's `transitionPreset` strike (~0.9 s total) and
-  navigates at the strike's midpoint. Back restores the exact journey scroll position
+- Activating the slab plays that project's `transitionPreset` strike and navigates at
+  the strike's midpoint (~420 ms). Back restores the exact journey scroll position
   from `history.state`.
 - Reduced motion and keyboard activation skip the strike and use a plain `<Link>`.
 
