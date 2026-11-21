@@ -7,9 +7,17 @@ import { defineConfig, type Plugin } from "vite";
 
 /**
  * sitemap.xml and robots.txt from the prerendered output. Absolute URLs need a
- * real origin, so nothing is written unless SITE_URL is set; no domain is
- * invented. See docs/content/TODO.md.
+ * real origin: SITE_URL wins, then the stable Vercel production domain. No
+ * domain is invented. See docs/content/TODO.md.
  */
+function siteOrigin(): string | undefined {
+  if (process.env.SITE_URL) return process.env.SITE_URL;
+
+  const vercel =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+  return vercel ? `https://${vercel}` : undefined;
+}
+
 function seoFiles(): Plugin {
   return {
     name: "seo-files",
@@ -17,9 +25,11 @@ function seoFiles(): Plugin {
       const clientDir = "build/client";
       if (!existsSync(clientDir)) return;
 
-      const site = process.env.SITE_URL;
+      const site = siteOrigin();
       if (!site) {
-        console.warn("[seo] SITE_URL not set; skipping sitemap.xml and robots.txt");
+        console.warn(
+          "[seo] SITE_URL not set; skipping sitemap.xml and robots.txt",
+        );
         return;
       }
 
