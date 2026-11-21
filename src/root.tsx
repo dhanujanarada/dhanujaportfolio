@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Links, Meta, Scripts, ScrollRestoration } from "react-router";
+
+import { App } from "./App";
 
 import "./app.css";
 
@@ -21,8 +23,8 @@ export function Layout({ children }: { children: ReactNode }) {
   );
 }
 
-export default function App() {
-  // The persistent <Canvas> mounts here in the scene-shell phase, outside the
-  // router outlet, so it never unmounts across navigations.
-  return <Outlet />;
+export default function Root() {
+  // App owns the persistent <Canvas>, outside the router outlet, so it never
+  // unmounts across navigations (AGENTS.md rule 1).
+  return <App />;
 }
