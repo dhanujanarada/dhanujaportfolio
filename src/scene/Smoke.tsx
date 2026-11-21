@@ -80,15 +80,11 @@ const FRAGMENT = /* glsl */ `
   }
 `;
 
-const COUNT_BY_TIER: Record<QualityTier, number> = {
-  high: TIER_SETTINGS.high.smokeCount,
-  medium: TIER_SETTINGS.medium.smokeCount,
-  low: TIER_SETTINGS.low.smokeCount,
-};
+const COUNT_BY_TIER = (tier: QualityTier) => TIER_SETTINGS[tier].smokeCount;
 
 export function Smoke() {
   const tier = useStore(qualityStore, (state) => state.tier);
-  const count = COUNT_BY_TIER[tier];
+  const count = COUNT_BY_TIER(tier);
   const material = useRef<ShaderMaterial>(null);
   const previousGlobal = useRef(0);
   const velocity = useRef(0);
@@ -134,13 +130,8 @@ export function Smoke() {
     [noise],
   );
 
-  useEffect(
-    () => () => {
-      geometry?.dispose();
-      noise.dispose();
-    },
-    [geometry, noise],
-  );
+  useEffect(() => () => geometry?.dispose(), [geometry]);
+  useEffect(() => () => noise.dispose(), [noise]);
 
   useFrame((state, delta) => {
     const shader = material.current;
