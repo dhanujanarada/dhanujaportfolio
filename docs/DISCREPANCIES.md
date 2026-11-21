@@ -95,8 +95,10 @@ records why the visual language keeps them there.
 The remote HDR, the synchronous three/drei bundle and the startup postprocessing were
 the load cost, not the katana (201 kB, no textures). The scene is now a lazy chunk,
 the HDR is gone, the sword uses one standard material program, the model is preloaded,
-phones start at low, and effects load only after the tier settles. Decision 0008
-records the budget and the measurements.
+phones start at low, and effects load only after the tier settles. In `pnpm dev` the
+heavy dependencies are pre-declared in `optimizeDeps.include`; without that, the lazy
+scene triggered a late re-optimization and a `504 Outdated Optimize Dep` reload.
+Decision 0008 records the budget and the measurements.
 
 ## 2026-11-21 — fixed in the review pass
 

@@ -34,6 +34,10 @@ for an effect mostly hidden behind the parchment.
 - **The monitor ignores stalls.** Deltas over 200 ms restart the sample; eight in a row
   settle to low, so a machine that never reaches steady state still stops paying for
   medium.
+- **Dev dependencies are pre-declared.** `optimizeDeps.include` lists React, React
+  Router, GSAP, Lenis, Zustand and the three/drei/postprocessing packages. Without it,
+  the lazy scene triggers a late Vite re-optimization and a page reload with
+  `504 Outdated Optimize Dep` in `pnpm dev`.
 
 ## Consequences
 

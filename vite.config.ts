@@ -69,4 +69,26 @@ function seoFiles(): Plugin {
 
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), seoFiles()],
+  optimizeDeps: {
+    // The scene is a lazy chunk. Without a complete list, Vite discovers
+    // dependencies in waves, re-optimizes, and reloads the page mid-load with
+    // "Outdated Optimize Dep" errors.
+    include: [
+      "react",
+      "react-dom",
+      "react-dom/client",
+      "react/jsx-dev-runtime",
+      "react-router",
+      "gsap",
+      "gsap/ScrollTrigger",
+      "lenis",
+      "zustand",
+      "zustand/vanilla",
+      "three",
+      "@react-three/fiber",
+      "@react-three/drei",
+      "@react-three/postprocessing",
+      "postprocessing",
+    ],
+  },
 });
