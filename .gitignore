@@ -10,3 +10,6 @@ dist/
 
 .DS_Store
 *.log
+
+# Retired 30 MB source master; kept locally, not in git.
+assets/Golden Katana V1.glb

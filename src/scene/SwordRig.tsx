@@ -1,30 +1,25 @@
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef } from "react";
-import { Quaternion, Vector3, type Group } from "three";
+import { useEffect, useRef } from "react";
+import type { Group, Object3D } from "three";
 
 import { scrollStore } from "../store/scroll";
-import { Sword } from "./Sword";
-import { SwordTrail } from "./SwordTrail";
-import { sampleTransition, type SwordPose, type TransitionPreset } from "./swordPath";
+import { Sparks } from "./Sparks";
+import { Sword, drawProgress } from "./Sword";
 
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
-const IDLE_PERIOD = 4;
-
-// Temporary: presets are positional until the CMS feeds them through the store.
-const PRESET_BY_INDEX: Partial<Record<number, TransitionPreset>> = {
-  1: "slash",
-  2: "thrust",
-  3: "sweep",
-};
+const IDLE_PERIOD = 5;
+const SCALE = 3;
+const TILT = 0.14;
+/** The sheathed silhouette is asymmetric; this centres it in a 16:9 frame. */
+const CENTRE_OFFSET = 0.9;
+/** Resting height: the blade and saya sit on the centre line. */
+const CENTRE_Y = 0.04;
 
 export function SwordRig() {
   const group = useRef<Group>(null);
+  const mouth = useRef<Object3D>(null);
   const reducedMotion = useRef(false);
   const invalidate = useThree((state) => state.invalidate);
-  const pose = useMemo<SwordPose>(
-    () => ({ position: new Vector3(), quaternion: new Quaternion() }),
-    [],
-  );
 
   useEffect(() => {
     const query = window.matchMedia(REDUCED_MOTION_QUERY);
@@ -42,43 +37,40 @@ export function SwordRig() {
     const object = group.current;
     if (!object) return;
 
-    if (reducedMotion.current) {
-      object.position.set(0, 0, 0);
-      object.quaternion.identity();
-      return;
-    }
-
-    const { activeIndex, sections } = scrollStore.getState();
-    const progress = sections[activeIndex]?.progress ?? 0;
-    const preset = PRESET_BY_INDEX[activeIndex];
-
-    if (preset) {
-      sampleTransition(preset, progress, pose);
-    } else {
-      pose.position.set(0, 0, 0);
-      pose.quaternion.identity();
-    }
-
-    // Drift only near the resting pose; it fades out while the blade is in flight.
-    const idleWeight = 1 - Math.min(1, pose.position.length() / 0.3);
+    const { global } = scrollStore.getState();
+    const draw = drawProgress(global);
+    const storm = smoothstep(0.55, 1, global);
     const time = state.clock.elapsedTime;
-    const phase = activeIndex * 0.9;
 
-    object.position.copy(pose.position);
-    object.position.y +=
-      (Math.sin((time * Math.PI * 2) / IDLE_PERIOD + phase) * 0.06 * idleWeight);
-    object.quaternion.copy(pose.quaternion);
-    object.rotateY(Math.sin(time * 0.9 + phase) * 0.04 * idleWeight);
+    object.scale.setScalar(SCALE + storm * 0.1);
+    object.position.x = CENTRE_OFFSET;
 
-    invalidate();
+    // Drawn at the top (hilt upper-right); sheathing tips it the other way.
+    object.rotation.z = TILT * (draw * 2 - 1) + storm * 0.06;
+
+    object.position.y =
+      CENTRE_Y -
+      storm * 0.18 +
+      (reducedMotion.current
+        ? 0
+        : Math.sin((time * Math.PI * 2) / IDLE_PERIOD) * 0.03);
+
+    object.position.z = storm * 1.5;
+
+    if (!reducedMotion.current) invalidate();
   });
 
   return (
     <>
       <group ref={group} name="sword-rig">
-        <Sword />
+        <Sword mouthRef={mouth} />
       </group>
-      <SwordTrail target={group} />
+      <Sparks mouth={mouth} />
     </>
   );
+}
+
+function smoothstep(edge0: number, edge1: number, value: number) {
+  const t = Math.min(1, Math.max(0, (value - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
 }
