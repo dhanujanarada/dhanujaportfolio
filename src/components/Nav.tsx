@@ -2,19 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
 
 import type { SiteSettings } from "../content/cv";
-
-const LINKS = [
-  { to: "/", label: "Home" },
-  { to: "/projects", label: "Projects" },
-  { to: "/about", label: "About" },
-  { to: "/experience", label: "Experience" },
-  { to: "/credentials", label: "Credentials" },
-  { to: "/contact", label: "Contact" },
-];
+import { NAV_LINKS } from "../content/nav";
 
 export function Nav({ settings }: { settings: SiteSettings }) {
   const [open, setOpen] = useState(false);
   const firstLink = useRef<HTMLAnchorElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -22,10 +17,39 @@ export function Nav({ settings }: { settings: SiteSettings }) {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      // Return focus to the trigger only when the menu was actually open.
+      if (wasOpen.current) toggle.current?.focus();
+      wasOpen.current = false;
+      return;
+    }
+
+    wasOpen.current = true;
+
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const focusable = panel.current?.querySelectorAll<HTMLElement>(
+        "a[href], button:not([disabled])",
+      );
+      if (!focusable || focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
+
     window.addEventListener("keydown", onKeyDown);
     firstLink.current?.focus();
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -45,7 +69,7 @@ export function Nav({ settings }: { settings: SiteSettings }) {
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          {LINKS.map((link) => (
+          {NAV_LINKS.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -70,6 +94,7 @@ export function Nav({ settings }: { settings: SiteSettings }) {
         </div>
 
         <button
+          ref={toggle}
           type="button"
           className="font-ui text-xs tracking-[0.08em] text-pearl md:hidden"
           aria-expanded={open}
@@ -82,11 +107,15 @@ export function Nav({ settings }: { settings: SiteSettings }) {
 
       {open && (
         <div
+          ref={panel}
           id="mobile-nav"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
           className="border-t border-pearl/10 bg-ink px-5 py-4 md:hidden"
         >
           <ul className="flex flex-col gap-3">
-            {LINKS.map((link, index) => (
+            {NAV_LINKS.map((link, index) => (
               <li key={link.to}>
                 <NavLink
                   ref={index === 0 ? firstLink : undefined}

@@ -12,7 +12,7 @@ export function Page({
   children: ReactNode;
 }) {
   return (
-    <main className="relative z-10 min-h-svh bg-ink">
+    <main id="main" className="relative z-10 min-h-svh bg-ink/88 backdrop-blur-sm">
       <div className="mx-auto max-w-4xl px-5 pb-24 pt-28 md:px-8">
         <p className="font-ui text-xs tracking-[0.08em] text-champagne">
           {kicker}

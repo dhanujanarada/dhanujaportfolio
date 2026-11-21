@@ -1,14 +1,7 @@
 import { Link } from "react-router";
 
 import type { SiteSettings } from "../content/cv";
-
-const LINKS = [
-  { to: "/projects", label: "Projects" },
-  { to: "/about", label: "About" },
-  { to: "/experience", label: "Experience" },
-  { to: "/credentials", label: "Credentials" },
-  { to: "/contact", label: "Contact" },
-];
+import { FOOTER_LINKS } from "../content/nav";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
   return (
@@ -25,7 +18,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
 
         <div className="flex flex-col gap-3 md:items-end">
           <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
-            {LINKS.map((link) => (
+            {FOOTER_LINKS.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}

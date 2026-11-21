@@ -89,9 +89,16 @@ function RouteWipe() {
 
     const timeline = gsap
       .timeline()
+      .addLabel("wipe")
       .set(element, { opacity: 0 })
       .to(element, { opacity: 0.9, duration: 0.16, ease: "power2.in" })
-      .to(element, { opacity: 0, duration: 0.55, ease: "power2.out" });
+      .addLabel("enter")
+      .call(() => {
+        // Content routes start at the top; the journey keeps its position.
+        if (pathname !== "/") window.scrollTo(0, 0);
+      })
+      .to(element, { opacity: 0, duration: 0.55, ease: "power2.out" })
+      .addLabel("settle");
 
     return () => {
       timeline.kill();
@@ -119,7 +126,9 @@ export function App({
   headline: string;
 }) {
   const { pathname } = useLocation();
-  const ambient = pathname !== "/";
+  // Prerender emits paths with a trailing slash ("/about/"); the client does not.
+  const route = pathname.replace(/\/+$/, "") || "/";
+  const ambient = route !== "/";
   const tier = useStore(qualityStore, (state) => state.tier);
   const settingsByTier = TIER_SETTINGS[tier];
 
@@ -128,16 +137,24 @@ export function App({
     "@type": "Person",
     name: settings.title,
     headline,
-    email: `mailto:${settings.email}`,
     sameAs: [settings.linkedin, settings.github].filter(Boolean),
   };
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }}
-      />
+      {route === "/" || route === "/about" ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }}
+        />
+      ) : null}
+
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-champagne focus:px-4 focus:py-2 focus:font-ui focus:text-xs focus:text-ink"
+      >
+        Skip to content
+      </a>
       <div className="fixed inset-0 -z-10">
         <Canvas
           frameloop="demand"
