@@ -73,11 +73,13 @@ The Canvas stays mounted; only `Outlet` content and the scene's pose mode change
 ## Prerender and metadata
 
 - `react-router.config.ts` prerender enumerates `/`, `/projects`, `/about`,
-  `/experience`, `/credentials`, `/contact`, and every `/projects/:slug` from Sanity.
-- Build fails with a clear message if `VITE_SANITY_PROJECT_ID` is missing or no projects
-  are returned.
+  `/experience`, `/credentials`, `/contact`, and every `/projects/:slug` from the
+  content driver.
+- Build fails with a clear message if the content driver returns no projects or
+  duplicate slugs.
 - Per route: `<title>`, description, Open Graph tags.
-- `sitemap.xml` and `robots.txt` generated at build from the same slug list.
+- `sitemap.xml` and `robots.txt` generated at build from the same slug list, using
+  `SITE_URL` or the Vercel production URL.
 - JSON-LD `Person` on `/` and `/about`: `name`, `headline`, `sameAs` (LinkedIn, GitHub).
   No `telephone`. No invented employer facts beyond the CV.
 
@@ -98,7 +100,7 @@ The Canvas stays mounted; only `Outlet` content and the scene's pose mode change
 
 ## Dependencies (blocking)
 
-- Sanity project ID, dataset and write token.
+- GitHub remote and Vercel project, with the owner's account access.
 - CV PDF placed in `public/cv/` (filename to be confirmed).
 - Portrait image for About, or a documented silhouette placeholder.
 - Case-study copy for Problem / Results / Lessons, or placeholders accepted.

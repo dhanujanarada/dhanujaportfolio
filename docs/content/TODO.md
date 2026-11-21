@@ -1,8 +1,8 @@
 # Content TODO
 
 Every placeholder currently on the site. Source of facts: `docs/content/cv-data.md`.
-Clear an item by supplying copy/asset, updating Sanity (or the CV driver), and removing
-the line here.
+Clear an item by supplying copy/asset, updating the file under `src/content/`, and
+removing the line here.
 
 ## Projects
 
@@ -13,15 +13,18 @@ the line here.
   the architecture as a section.
 - [ ] **Results** — one per project; the CV has no metrics, benchmarks or outcomes.
 - [ ] **What I learned** — one per project; not in the CV.
-- [ ] **Project images** — hero slot per case study, plus optional galleries.
+- [ ] **Project images** — add `public/projects/<slug>/cover.webp` and set
+  `cover: { src, alt }` in `src/content/projects/<slug>.ts`. Until then the case
+  study shows a `[TODO: project image]` frame.
 - [ ] **Silmarillion repository URL** — the CV flags it: "verify spelling of this URL".
   Currently `github.com/dhanujanarada/similarionRAG`.
 
 ## Media and documents
 
-- [ ] **Portrait** for `/about` (currently a dashed `[TODO: portrait]` frame).
-- [ ] **CV PDF** — place at `public/cv/dhanuja-narada-uduravana-cv.pdf` and point
-  `siteSettings.cvFile` at it. CV links are hidden until then.
+- [ ] **Portrait** for `/about` (currently a `[TODO: portrait]` frame). Drop the file in
+  `public/` and set `about.portrait = { url, alt }` in `src/content/cv.ts`.
+- [ ] **CV PDF** — place at `public/cv/dhanuja-narada-uduravana-cv.pdf` and set
+  `settings.cvFile` in `src/content/cv.ts`. CV links are hidden until then.
 
 ## Data gaps in the CV
 
@@ -32,11 +35,10 @@ the line here.
 
 ## Infrastructure
 
-- [ ] **Sanity project** — no project ID/dataset/write token yet, so the seed script has
-  not run and routes read the CV driver (`src/content/cv.ts`).
-- [ ] **SITE_URL** — set at build time to emit `sitemap.xml` and `robots.txt` with
-  absolute URLs. No domain is invented; both files are skipped without it.
-- [ ] **Seed run** — requires owner approval and credentials.
+- [ ] **Deployment** — GitHub remote and Vercel project are not connected yet. See
+  `docs/DEPLOY.md`.
+- [ ] **SITE_URL** — only needed for a custom domain. On Vercel the build falls back to
+  `VERCEL_PROJECT_PRODUCTION_URL` and writes `sitemap.xml` and `robots.txt`.
 
 ## Motion gaps (code, not content)
 

@@ -2,8 +2,8 @@
 
 ## Current state
 
-- Greenfield portfolio showcase site: Vite + React + TypeScript SPA with prerendering, a single persistent R3F scene, and Sanity as the content source.
-- Layout: frontend at the repo root (`src/`), Sanity Studio in `studio/`, documentation in `docs/`.
+- Greenfield portfolio showcase site: Vite + React + TypeScript SPA with prerendering, a single persistent R3F scene, and typed content files under `src/content/` as the content source.
+- Layout: frontend at the repo root (`src/`), documentation in `docs/`.
 - Work proceeds in phases (scaffold, content, scene shell, sword and path, atmosphere, hover and typography, about infographic, swordsman and polish). Do not start a phase until the user says so.
 
 ## Review protocol (mandatory)
@@ -19,7 +19,7 @@ task size, mode, or any general instruction to move quickly.
 
 Do not batch file changes. Do not commit a step until the user approves it. Do
 not treat silence as approval. This rule applies to code, shaders, styles,
-configuration, Sanity schemas, and documentation. Installing dependencies counts
+configuration, and documentation. Installing dependencies counts
 as a change: state the packages and why, then wait for approval.
 
 ## Verification
@@ -31,10 +31,10 @@ as a change: state the packages and why, then wait for approval.
 ## Stack
 
 Vite, React, TypeScript, React Router (SPA + prerender), React Three Fiber + drei +
-postprocessing, GSAP (ScrollTrigger) + Lenis, Tailwind v4, Sanity (content), pnpm.
+postprocessing, GSAP (ScrollTrigger) + Lenis, Tailwind v4, pnpm.
 
 Library versions may differ from your training data (React, R3F, drei, Tailwind v4,
-React Router, Sanity). Before writing code against a library, read the installed
+React Router). Before writing code against a library, read the installed
 package's docs or types in `node_modules/`, and heed deprecation notices.
 
 ## Architecture rules
@@ -48,10 +48,14 @@ package's docs or types in `node_modules/`, and heed deprecation notices.
 
 ## Content rules
 
-6. All copy and project data comes from Sanity via GROQ. No hard-coded content. Show a
-   loading state in the scene until content resolves.
-7. Schema changes live in `studio/schemaTypes/` and need a decision record if they change existing field meaning.
-8. Sanity project ID and dataset come from env vars. Never commit tokens or `.env` files. Use read-only public queries in the browser; any write token stays out of the frontend entirely.
+6. All copy and project data comes from typed files under `src/content/`. Route
+   components must not contain content facts. The driver in `src/content/content.ts`
+   is the only place routes read content from.
+7. Content type changes live in `src/content/types.ts` and need a decision record if
+   they change existing field meaning. Project case studies live one file per project
+   in `src/content/projects/`.
+8. Never commit tokens or `.env` files. Only `.env.example` is tracked. The build reads
+   `SITE_URL` for sitemap and robots; no secret belongs in the frontend.
 
 ## Quality and accessibility
 

@@ -1,6 +1,12 @@
 # Content model v2
 
-- Status: draft, awaiting approval
+> **Superseded.** The Sanity implementation described here was removed on
+> 2026-11-21. The typed files under `src/content/` are now the content source; see
+> [`content-model-v3.md`](content-model-v3.md) and
+> [`../decisions/0007-content-in-code.md`](../decisions/0007-content-in-code.md). This
+> document is retained as the field-definition history.
+
+- Status: superseded
 - Date: 2026-11-21
 - Replaces: the unapproved draft in `docs/specs/content-model.md`
 - Source of truth: `docs/content/data.md` (CV), plus owner-supplied media

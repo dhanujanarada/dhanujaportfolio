@@ -38,28 +38,23 @@ sample after a 0.5 s warm-up and the overlay prints it, but no tier has been
 measured on real hardware. Every visual claim is code-level only; the katana draw,
 smoke, parchment edges, text fit, kinetic reveals and fog still need a human look.
 
-## 2026-11-21 — routes read the CV file, not Sanity
-
-No Sanity project ID or token exists, so `src/cms/content.ts` falls back to
-`src/content/cv.ts` and the seed has never run. The build succeeds and every route
-prerenders from the CV file. Decision 0005 records this; it must be closed by setting
-the env vars and running the seed before deploy.
-
 ## 2026-11-21 — the shader cover stays home-only
 
 `/projects` renders parchment cards with no shader plane; the plane exists only on the
 home journey where sections align with the canvas. Both routes use the same content and
 the same card affordance.
 
-## 2026-11-21 — seed script exists but has never run
+## 2026-11-21 — sitemap and robots need an origin
 
-`scripts/seed.ts` is idempotent and writes fixed IDs, but there is no project ID or write
-token, so it cannot be verified. The CV driver remains the build-time source.
+The Vite plugin reads `SITE_URL`, then `VERCEL_PROJECT_PRODUCTION_URL`, and skips
+`sitemap.xml` and `robots.txt` when neither exists rather than inventing a domain.
+Prerendered HTML, per-page titles and JSON-LD are present regardless.
 
-## 2026-11-21 — sitemap and robots need SITE_URL
+## 2026-11-21 — unknown paths are a soft 404
 
-The Vite plugin skips `sitemap.xml` and `robots.txt` when `SITE_URL` is absent rather
-than inventing a domain. Prerendered HTML, per-page titles and JSON-LD are present.
+Vercel serves `__spa-fallback.html` for unmatched paths, so the React 404 page renders
+with HTTP 200. A real 404 status would need a static `404.html` or a function; neither is
+worth it for this portfolio. The fallback is marked `X-Robots-Tag: noindex`.
 
 ## 2026-11-21 — the 404 wildcard is not prerendered
 
@@ -73,20 +68,19 @@ Browser Back relies on React Router's `ScrollRestoration`, not a custom
 `history.state` save. It has not been verified with Lenis in a browser; a second history
 mechanism would fight the router.
 
-## 2026-11-21 — section metadata is declared three times
+## 2026-11-21 — section metadata is declared twice
 
-`CaseSection` values appear in `src/content/cv.ts`, the `project` schema's section list,
-and `SECTION_ORDER`/`SECTION_LABELS` in `projects.$slug.tsx`. Adding a section touches
-three files. Deliberately deferred to the architecture pass rather than half-fixed.
+`CaseSection` values appear in `src/content/types.ts` and as
+`SECTION_ORDER`/`SECTION_LABELS` in `projects.$slug.tsx`. Adding a section touches two
+files. Deliberately deferred to the architecture pass rather than half-fixed.
 
 ## 2026-11-21 — interface labels stay in code
 
 Route copy that comes from the CV flows through the content driver: the hero headline,
 hero summary, project titles, periods, awards, skills, education and leadership. Labels
 that exist only to run the interface — “Descend”, “The long way here”, “Let's talk”,
-nav text and button text — remain in JSX. They are not CV claims and adding singleton
-fields for each would bloat the schema. Decision 0006 records the visual language; if
-the owner wants these labels editable, they become `siteSettings` fields.
+nav text and button text — remain in JSX. They are not CV claims, and decision 0006
+records why the visual language keeps them there.
 
 ## 2026-11-21 — fixed in the review pass
 
@@ -95,5 +89,4 @@ produce different strikes, driven by one GSAP tween; focus-visible rings and a s
 exist; the mobile menu traps Tab and returns focus to its trigger; hidden CTAs leave the
 tab order; OG tags are emitted on every page; JSON-LD is limited to `/` and `/about`
 without email, and prerender's trailing-slash paths no longer suppress it; an empty
-project set fails the build; CV location and the Toastmasters committee note are present;
-the Sanity queries now fetch `cvFile` and the portrait, so both resolve when configured.
+project set fails the build; CV location and the Toastmasters committee note are present.
