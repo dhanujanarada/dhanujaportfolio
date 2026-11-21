@@ -1,4 +1,5 @@
 import { useFrame, useThree } from "@react-three/fiber";
+import gsap from "gsap";
 import { useEffect, useRef } from "react";
 import type { Group, Object3D } from "three";
 import { useStore } from "zustand";
@@ -22,6 +23,7 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
   const group = useRef<Group>(null);
   const mouth = useRef<Object3D>(null);
   const reducedMotion = useRef(false);
+  const kick = useRef({ value: 0 });
   const invalidate = useThree((state) => state.invalidate);
   const tier = useStore(qualityStore, (state) => state.tier);
 
@@ -39,7 +41,13 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
   useEffect(
     () =>
       strikeStore.subscribe((state) => {
-        if (state.preset) invalidate();
+        if (!state.preset) return;
+        invalidate();
+        gsap.killTweensOf(kick.current);
+        gsap
+          .timeline({ onUpdate: invalidate })
+          .to(kick.current, { value: 1, duration: 0.32, ease: "power3.out" })
+          .to(kick.current, { value: 0, duration: 0.5, ease: "power2.in" });
       }),
     [invalidate],
   );
@@ -61,9 +69,16 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
     if (!object) return;
 
     if (ambient) {
+      const time = state.clock.elapsedTime;
       object.scale.setScalar(SCALE);
-      object.position.set(CENTRE_OFFSET, CENTRE_Y, 0);
-      object.rotation.z = 0.04;
+      object.position.set(
+        CENTRE_OFFSET,
+        CENTRE_Y + Math.sin(time * 0.5) * 0.02,
+        0,
+      );
+      object.rotation.z = 0.04 + Math.sin(time * 0.35) * 0.03;
+      object.rotation.y = Math.sin(time * 0.25) * 0.08;
+      if (tier !== "low" && !reducedMotion.current) invalidate();
       return;
     }
 
@@ -86,20 +101,18 @@ export function SwordRig({ ambient = false }: { ambient?: boolean }) {
         : Math.sin((time * Math.PI * 2) / IDLE_PERIOD) * 0.03);
 
     object.position.z = storm * 1.5;
+    object.rotation.y = 0;
 
-    const strike = strikeStore.getState();
-    if (strike.preset) {
-      const elapsed = performance.now() - strike.startedAt;
-      const progress = Math.min(1, elapsed / 900);
-      if (progress >= 1) {
-        strike.clear();
-      } else {
-        const kick = Math.sin(progress * Math.PI);
-        object.rotation.z += kick * 0.45;
-        object.position.z += kick * 0.9;
-        object.scale.setScalar(SCALE + storm * 0.1 + kick * 0.06);
-        invalidate();
-      }
+    const k = kick.current.value;
+    if (k > 0.001) {
+      const preset = strikeStore.getState().preset;
+      if (preset === "slash") object.rotation.z += k * 0.5;
+      else if (preset === "thrust") object.position.z += k * 1.2;
+      else if (preset === "sweep") object.rotation.y = k * 0.7;
+      else if (preset === "spiral") object.rotation.y = k * Math.PI * 2;
+
+      object.scale.setScalar(SCALE + storm * 0.1 + k * 0.05);
+      invalidate();
     }
 
     if (!reducedMotion.current && tier === "high") invalidate();
