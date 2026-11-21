@@ -1,1 +1,61 @@
 @import "tailwindcss";
+
+@import "@fontsource/cinzel/latin-400.css";
+@import "@fontsource/cinzel/latin-500.css";
+@import "@fontsource-variable/cormorant-garamond/wght.css";
+@import "@fontsource-variable/cormorant-garamond/wght-italic.css";
+@import "@fontsource-variable/inter/wght.css";
+
+@theme {
+  --font-display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --font-body: "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --font-ui: "Inter", system-ui, sans-serif;
+
+  --color-pearl: #f2ede1;
+  --color-pearl-deep: #e4dccb;
+  --color-champagne: #c9a86a;
+  --color-champagne-soft: #e0c99a;
+  --color-ink: #0a111c;
+  --color-ink-soft: #131c29;
+
+  /* Per-project accent arrives from Sanity; this is the neutral fallback. */
+  --color-accent: #c9a86a;
+
+  --text-display: clamp(3.25rem, 7vw, 8.25rem);
+  --text-title: clamp(2rem, 3.6vw, 4rem);
+  --text-body: 1.125rem;
+  --text-label: 0.75rem;
+
+  --leading-display: 0.95;
+  --leading-body: 1.38;
+  --tracking-display: 0.02em;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-pearl);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  ::selection {
+    background-color: var(--color-champagne);
+    color: var(--color-ink);
+  }
+}
