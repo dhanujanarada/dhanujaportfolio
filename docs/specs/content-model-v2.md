@@ -102,8 +102,10 @@ Deliberately absent: `phone`, `socials[]` (explicit fields instead), analytics I
 | Leadership (2) | two `leadership` docs |
 | Phone | **never seeded, never queried** |
 
-Project case studies: `Approach` and `Architecture` are rewritten from CV bullets;
-`Problem`, `Results`, `What I learned` start as `[TODO: …]` unless the owner writes them.
+Project case studies: `Approach` is seeded verbatim from the CV bullets; `Problem`,
+`Architecture`, `Results` and `What I learned` start as `[TODO: …]` unless the owner
+writes them. The CV bullets describe pipelines, not a sectioned architecture, so no
+architecture text is inferred from them.
 Hero/gallery images are `[TODO: project image]` and no `cover` is set until supplied.
 
 ## Queries

@@ -67,3 +67,40 @@ token, so it cannot be verified. The CV driver remains the build-time source.
 
 The Vite plugin skips `sitemap.xml` and `robots.txt` when `SITE_URL` is absent rather
 than inventing a domain. Prerendered HTML, per-page titles and JSON-LD are present.
+
+## 2026-11-21 — the 404 wildcard is not prerendered
+
+A `*` route has no concrete URL, so React Router cannot emit HTML for it. Unknown paths
+are served `__spa-fallback.html` and the 404 component hydrates. A static `/404` could be
+prerendered as a linkable page, but it would not change what an unknown URL returns.
+
+## 2026-11-21 — back-scroll restoration is delegated
+
+Browser Back relies on React Router's `ScrollRestoration`, not a custom
+`history.state` save. It has not been verified with Lenis in a browser; a second history
+mechanism would fight the router.
+
+## 2026-11-21 — section metadata is declared three times
+
+`CaseSection` values appear in `src/content/cv.ts`, the `project` schema's section list,
+and `SECTION_ORDER`/`SECTION_LABELS` in `projects.$slug.tsx`. Adding a section touches
+three files. Deliberately deferred to the architecture pass rather than half-fixed.
+
+## 2026-11-21 — interface labels stay in code
+
+Route copy that comes from the CV now flows through the content driver: the hero
+headline, the hero summary, project titles, periods, awards, skills, education and
+leadership. Labels that exist only to run the interface — “Keep scrolling”, “The long
+way here”, “Let's talk”, nav and button text — remain in JSX. They are not CV claims and
+adding singleton fields for each would bloat the schema. If the owner wants them
+editable, they become `siteSettings` fields and the seed grows with them.
+
+## 2026-11-21 — fixed in the review pass
+
+Ambient routes now show the animated sword through a translucent page surface; presets
+produce different strikes, driven by one GSAP tween; focus-visible rings and a skip link
+exist; the mobile menu traps Tab and returns focus to its trigger; hidden CTAs leave the
+tab order; OG tags are emitted on every page; JSON-LD is limited to `/` and `/about`
+without email, and prerender's trailing-slash paths no longer suppress it; an empty
+project set fails the build; CV location and the Toastmasters committee note are present;
+the Sanity queries now fetch `cvFile` and the portrait, so both resolve when configured.
